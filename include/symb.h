@@ -13,11 +13,9 @@ typedef struct sym{
 
 void ajout_liste(Liste* l, Liste p,int t,int* d);
 
-void affiche_liste(Liste* l);
+void affiche_col(void *);
 
 void affiche_tab(symb* s);
-
-Liste* init_liste();
 
 int hachage(char* mot);
 
@@ -26,6 +24,8 @@ void ajout_tab(symb* t, symb* s);
 int deca_word (int d);
 
 void init_symb(symb* s);
+
+Liste* init_liste();
 
 void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text, Liste* bss);
 

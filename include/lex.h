@@ -24,6 +24,7 @@ typedef struct lexeme_s {
 } lexeme;
 
 void affiche(void* );
+void affiche_erreurs_lex(Liste l);
 lexeme*	init_lex(char*, int );
 void	lex_fsm(lexeme* );
 void	lex_standardise( char*, char*  );

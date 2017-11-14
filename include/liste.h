@@ -10,7 +10,6 @@ typedef struct Liste_s {
   void* val;
 } * Liste;
 
-void affiche_erreurs_lex(Liste l);
 Liste creer_liste(void);
 int liste_vide(Liste );
 void visualiser_liste(Liste ,p_affiche);

@@ -14,4 +14,4 @@ byebye:
     JAL viteviteauru
 .data
 lunchtime : .word 12
-.asciiz "bonjour \" blabla \" "
+.asciiz "blabla "

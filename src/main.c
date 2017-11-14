@@ -41,7 +41,6 @@ int main ( int argc, char *argv[] ) {
 
     unsigned int 	nlines 	= 0;
     char         	 *file 	= NULL;
-    Liste l = creer_liste();
 
     /* exemples d'utilisation des macros du fichier notify.h */
     /* WARNING_MSG : sera toujours affiche */
@@ -72,6 +71,7 @@ int main ( int argc, char *argv[] ) {
     }
 
     /* ---------------- do the lexical analysis -------------------*/
+    Liste l = creer_liste();
     l=lex_load_file(argv[1],&nlines,l);
     DEBUG_MSG("source code got %d lines",nlines);
     visualiser_liste(l,&affiche);
@@ -89,10 +89,14 @@ int main ( int argc, char *argv[] ) {
 
     affiche_erreurs_lex(l);
 
+    printf("\n-------------------------Collection Symboles-----------------------------\n");
     affiche_tab(s);
-    affiche_liste(data_l);
-    affiche_liste(text_l);
-    affiche_liste(bss_l);
+    printf("\n----------------------------Collection DATA-----------------------------------\n");
+    visualiser_liste(*data_l,&affiche_col);
+    printf("\n----------------------------Collection TEXT-----------------------------------\n");
+    visualiser_liste(*text_l,&affiche_col);
+    printf("\n----------------------------Collection BSS-----------------------------------\n");
+    visualiser_liste(*bss_l,&affiche_col);
 
     free(s);
 

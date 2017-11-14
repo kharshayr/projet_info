@@ -16,27 +16,23 @@ void affiche_tab(symb* s){ /* Affiche uniquement les etiquettes stockées */
 		printf("On a stocké l'étiquette %s de decalage %d dans la section %s \n",t->lex.tok,t->deca,secti[t->section]);}
 		t++;}}
 
-void affiche_liste(Liste* l){ /* Affiche les listes d'instruction constitutées */
+void affiche_col(void* e){ /* Affiche les listes d'instruction constitutées */
 	char* secti[]= {"bss", "data", "text", "INI"};
-	Liste u=*l;        
-	while(!liste_vide(u)){
-		if(((symb*)u->val)->lex.typ==DIRECTIVE || ((symb*)u->val)->lex.typ==SYMBOLE){
-			printf("On a stocké l'instruction %s avec un decalage de %d dans %s \n",((symb*)u->val)->lex.tok,((symb*)u->val)->deca,secti[((symb*)u->val)->section]);}
-		else{
-			printf("On a stocké l'operande %s avec un decalage de %d dans %s \n",((symb*)u->val)->lex.tok,((symb*)u->val)->deca,secti[((symb*)u->val)->section]);}
-	u=u->suiv;}}
+	if(((symb*)e)->lex.typ==DIRECTIVE || ((symb*)e)->lex.typ==SYMBOLE){
+		printf("Instruction : %s\t Decalage : %d\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
+	}
+	else{
+		printf("Operande : %s\t Decalage : %d\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
+	}
+}
 
 void ajout_liste(Liste* l, Liste p,int t,int* d){ /*Fonction qui allonge et rajoute un élément a la liste */
 	symb* temp=calloc(1,sizeof(symb));
 	temp->lex=*((lexeme*)p->val);
 	temp->deca=d[t];
 	temp->section=t;
-	*l=ajout_queue(temp,*l);}
-
-Liste* init_liste(){ /* Fonction qui alloue l'espace our une liste */
-	Liste* l=calloc(1,sizeof(*l));
-	*l=creer_liste();
-	return l;}
+	*l=ajout_queue(temp,*l);
+}
 
 int hachage(char* mot){ /* Fonction de hachage */
 	int i=0;
@@ -62,9 +58,15 @@ int deca_word (int d){ /* Fonction decalage pour .word */
 void init_symb(symb* t){ /* Fonction qui renvoie a l'etat initial */
 	t->section=INI;}
 
+Liste* init_liste(){
+		Liste* l = calloc(1,sizeof(*l));
+		*l=creer_liste();
+		return l;
+}
+
 void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 	int* d=calloc(3,sizeof(int));/* Stockage et initialisation des decalages [bss,data,text] */
-	Liste p=l->suiv;
+	Liste p=l;
 	lexeme* temp=p->val;
 	symb* t=calloc(1,sizeof(symb));
 	init_symb(t);
@@ -81,7 +83,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else{temp->typ=ERREUR;}/* ERREUR, on peut pas mettre une autre directive de ces trois là */
 					break;
 				case COMMENT:
-					break;		
+					break;
 				default:
 					temp->typ=ERREUR;/* ERREUR, on veut forcément un COMMENT ou une DIRECTIVE */
 					break;}
@@ -108,7 +110,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									temp->typ=ERREUR;/* ERREUR, on attend que VIRGULE et DECIMAL en argument */
 									break;}
 							p=p->suiv;
-							temp=p->val;}}								
+							temp=p->val;}}
 					else{temp->typ=ERREUR;}/* ERREUR, pas d'autres directives acceptées dans .bss */
 					break;
 				case COMMENT:
@@ -201,7 +203,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 								case DECIMAL:
 									ajout_liste(data_l,p,t->section,d);
 									d[data]=d[data]+atoi(temp->tok);
-									break;									
+									break;
 								case VIRGULE:
 									break;
 								default:
@@ -226,7 +228,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 						else{
 							temp->typ=ERREUR;/*ERREUR, on veut pas d'instruction */}}
 					break;
-					
+
 				default:
 					temp->typ=ERREUR;/*ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE */
 					break;}
@@ -276,4 +278,5 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 		else{;}}
 	free(d);
 	free(p);
-	free(t);}
+	free(t);
+}

@@ -7,12 +7,6 @@ Liste creer_liste(void) {
 	return NULL;
 }
 
-void affiche_erreurs_lex(Liste l){
-      printf("Erreur(s) lexicale(s) :\n");
-      while (!liste_vide(l->suiv)) {
-      	if (((lexeme*)(l->val))->typ==ERREUR) affiche(l->val);
-	    l=l->suiv;}}
-
 int liste_vide(Liste l) {
 	return !l;
 }
