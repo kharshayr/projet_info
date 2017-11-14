@@ -21,8 +21,6 @@ int hachage(char* mot);
 
 void ajout_tab(symb* t, symb* s);
 
-int deca_word (int d);
-
 void init_symb(symb* s);
 
 Liste* init_liste();

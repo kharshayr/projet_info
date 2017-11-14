@@ -13,11 +13,12 @@ boucle:
 byebye:
     JAL viteviteauru
 .data
-lunchtime : .word 12
+lunchtime :
+.word 12
 .byte 2,5
 .word 5
-.asciiz "bla bla"
+.asciiz "bla bla "
 .bss
 .space 12,4
-.space 2
+.space
 ADD rg

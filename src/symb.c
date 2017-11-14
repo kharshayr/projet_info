@@ -19,10 +19,10 @@ void affiche_tab(symb* s){ /* Affiche uniquement les etiquettes stockées */
 void affiche_col(void* e){ /* Affiche les listes d'instruction constitutées */
 	char* secti[]= {"bss", "data", "text", "INI"};
 	if(((symb*)e)->lex.typ==DIRECTIVE || ((symb*)e)->lex.typ==SYMBOLE){
-		printf("Instruction : %s\t Decalage : %d\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
+		printf("Instruction : %s\t\t Decalage : %d\t\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
 	}
 	else{
-		printf("Operande : %s\t Decalage : %d\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
+		printf("Operande : %s\t\t Decalage : %d\t\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
 	}
 }
 
@@ -49,11 +49,6 @@ void ajout_tab(symb* s, symb* t){ /* Fonction qui ajoute a la table de hachage *
 	int i=hachage(t->lex.tok);
 	s[i]=*t;
 	return;}
-
-int deca_word (int d){ /* Fonction decalage pour .word */
-	if (d%4==0){return (d+4);}
-	else {d=d-d%4;
-	return (d+8);}}
 
 void init_symb(symb* t){ /* Fonction qui renvoie a l'etat initial */
 	t->section=INI;}
@@ -95,6 +90,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".data")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".space")==0 && !liste_vide(p->suiv)){
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
 						ajout_liste(bss_l,p,t->section,d);
 						p=p->suiv;
 						temp=p->val;
@@ -111,6 +107,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									break;}
 							p=p->suiv;
 							temp=p->val;}}
+							else{temp->typ=ERREUR;}}
 					else{temp->typ=ERREUR;}/* ERREUR, pas d'autres directives acceptées dans .bss */
 					break;
 				case COMMENT:
@@ -138,18 +135,23 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".bss")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".word")==0  && !liste_vide(p->suiv)){
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
 						ajout_liste(data_l,p,t->section,d);
 						p=p->suiv;
 						temp=p->val;
 						while (current_l-temp->nl==0  && !liste_vide(p->suiv)){
 							switch (temp->typ){
 								case HEXA:
+								if (d[data]%4!=0){
+									d[data]=4+d[data]-d[data]%4;}
 									ajout_liste(data_l,p,t->section,d);
-									d[data]=deca_word(d[data]);
+									d[data]=d[data]+4;
 								break;
 								case DECIMAL:
+								if (d[data]%4!=0){
+									d[data]=4+d[data]-d[data]%4;}
 									ajout_liste(data_l,p,t->section,d);
-									d[data]=deca_word(d[data]);
+									d[data]=d[data]+4;
 									break;
 								case VIRGULE:
 									break;
@@ -158,7 +160,9 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									break;}
 							p=p->suiv;
 							temp=p->val;}}
+							else{temp->typ=ERREUR;}}
 					else if (strcmp((temp->tok),".byte")==0  && !liste_vide(p->suiv)){
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
 						ajout_liste(data_l,p,t->section,d);
 						p=p->suiv;
 						temp=p->val;
@@ -179,7 +183,9 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									break;}
 							p=p->suiv;
 							temp=p->val;}}
+							else{temp->typ=ERREUR;}}
 					else if (strcmp(temp->tok,".asciiz")==0 && !liste_vide(p->suiv)){
+						if(((lexeme*)p->suiv->val)->typ==CHAINE || ((lexeme*)p->suiv->val)->typ==VIRGULE){
 						ajout_liste(data_l,p,t->section,d);
 						p=p->suiv;
 						temp=p->val;
@@ -196,7 +202,9 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									break;}
 								p=p->suiv;
 								temp=p->val;}}
+								else{temp->typ=ERREUR;}}
 					else if (strcmp((temp->tok),".space")==0){
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
 						ajout_liste(data_l,p,t->section,d);
 						while (current_l-temp->nl==0  && !liste_vide(p->suiv)){
 							switch(temp->typ){
@@ -211,6 +219,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									break;}
 							p=p->suiv;
 							temp=p->val;}}
+							else{temp->typ=ERREUR;}}
 					else{
 						temp->typ=ERREUR;}/*ERREUR, directive dans mauvaise section */
 					break;
