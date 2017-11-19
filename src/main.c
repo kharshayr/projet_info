@@ -87,15 +87,15 @@ int main ( int argc, char *argv[] ) {
 
     tabl_symb(l,s,data_l,text_l,bss_l);
 
-    affiche_erreurs_lex(l);
+    affiche_erreurs_gram(l);
 
-    printf("\n-------------------------Collection Symboles-----------------------------\n");
+    printf("\n-------------------------Collection Symboles-----------------------------\n\n");
     affiche_tab(s);
-    printf("\n----------------------------Collection DATA-----------------------------------\n");
+    printf("\n----------------------------Collection DATA-----------------------------------\n\n");
     visualiser_liste(*data_l,&affiche_col);
-    printf("\n----------------------------Collection TEXT-----------------------------------\n");
+    printf("\n----------------------------Collection TEXT-----------------------------------\n\n");
     visualiser_liste(*text_l,&affiche_col);
-    printf("\n----------------------------Collection BSS-----------------------------------\n");
+    printf("\n----------------------------Collection BSS-----------------------------------\n\n");
     visualiser_liste(*bss_l,&affiche_col);
 
     free(s);
@@ -105,6 +105,7 @@ int main ( int argc, char *argv[] ) {
         inst_def_t * tab;
         tab=lect_dico_int("tests/dico.s", &nb_inst);
         int i;
+        printf("\nDictionnaire d'instructions\n\n");
         for (i=0;i<29;i++) {
           printf("%s %c %d\n", tab[i].symbole, tab[i].type, tab[i].nb_op);
         }

@@ -26,6 +26,13 @@ void affiche_col(void* e){ /* Affiche les listes d'instruction constitutées */
 	}
 }
 
+void affiche_erreurs_gram(Liste l){
+      printf("Erreur(s) gramaticales(s) :\n");
+      while (!liste_vide(l)) {
+      	if (((lexeme*)(l->val))->typ==ERREUR) affiche(l->val);
+	    l=l->suiv;}
+}
+
 void ajout_liste(Liste* l, Liste p,int t,int* d){ /*Fonction qui allonge et rajoute un élément a la liste */
 	symb* temp=calloc(1,sizeof(symb));
 	temp->lex=*((lexeme*)p->val);
@@ -160,7 +167,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									break;}
 							p=p->suiv;
 							temp=p->val;}}
-							else{temp->typ=ERREUR;}}
+							else{temp->typ=ERREUR;
+							printf("Pas d arg a .word ligne %d \n",temp->nl);}}
 					else if (strcmp((temp->tok),".byte")==0  && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
 						ajout_liste(data_l,p,t->section,d);
@@ -203,9 +211,11 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 								p=p->suiv;
 								temp=p->val;}}
 								else{temp->typ=ERREUR;}}
-					else if (strcmp((temp->tok),".space")==0){
+					else if (strcmp((temp->tok),".space")==0 && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
 						ajout_liste(data_l,p,t->section,d);
+						p=p->suiv;
+						temp=p->val;
 						while (current_l-temp->nl==0  && !liste_vide(p->suiv)){
 							switch(temp->typ){
 								case DECIMAL:
@@ -228,7 +238,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 				case SYMBOLE:
 					if (!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv)){
 						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){
-							ajout_liste(bss_l,p,t->section,d);
+							ajout_liste(data_l,p,t->section,d);
 							t->lex=*temp;
 							t->deca=d[data];
 							ajout_tab(s,t);

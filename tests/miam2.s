@@ -15,10 +15,7 @@ byebye:
 .data
 lunchtime :
 .word 12
-.byte 2,5
+.byte
 .word 5
 .asciiz "bla bla "
-.bss
-.space 12,4
-.space
-ADD rg
+.word

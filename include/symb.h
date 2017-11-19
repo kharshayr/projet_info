@@ -11,20 +11,14 @@ typedef struct sym{
 	sect section;                           /* Section dans laquelle on est*/
 	int deca;} symb;                        /* Décalage en octets*/
 
-void ajout_liste(Liste* l, Liste p,int t,int* d);
-
-void affiche_col(void *);
-
-void affiche_tab(symb* s);
-
-int hachage(char* mot);
-
-void ajout_tab(symb* t, symb* s);
-
-void init_symb(symb* s);
-
+void ajout_liste(Liste*, Liste, int, int*);
+void affiche_col(void*);
+void affiche_tab(symb*);
+void affiche_erreurs_gram(Liste);
+int hachage(char*);
+void ajout_tab(symb*, symb*);
+void init_symb(symb*);
 Liste* init_liste();
-
-void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text, Liste* bss);
+void tabl_symb(Liste, symb*, Liste*, Liste*, Liste*);
 
 #endif
