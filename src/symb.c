@@ -82,81 +82,89 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					if (strcmp(temp->tok,".bss")==0){t->section=bss;}
 					else if (strcmp(temp->tok,".data")==0){t->section=data;}
 					else if (strcmp(temp->tok,".text")==0){t->section=text;}
-					else{temp->typ=ERREUR;}/* ERREUR, on peut pas mettre une autre directive de ces trois là */
+					else{
+						temp->typ=ERREUR;
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}/* ERREUR, on peut pas mettre une autre directive de ces trois là */
 					break;
 				case COMMENT:
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 					break;
 				default:
-					temp->typ=ERREUR;/* ERREUR, on veut forcément un COMMENT ou une DIRECTIVE */
+					temp->typ=ERREUR;
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/* ERREUR, on veut forcément un COMMENT ou une DIRECTIVE */
 					break;}
 			break;
 		case bss:
 			switch (temp->typ){
 				case DIRECTIVE:
-					if (strcmp((temp->tok),".bss")==0){;} /* On change pas de section */
+					if (strcmp((temp->tok),".bss")==0){
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}} /* On change pas de section */
 					else if (strcmp(temp->tok,".data")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".space")==0 && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
-						ajout_liste(bss_l,p,t->section,d);
-						p=p->suiv;
-						temp=p->val;
-						while ((current_l-temp->nl && !liste_vide(p->suiv))==0){
-							switch(temp->typ){
-								case DECIMAL: /* Test validité arguments */
-									ajout_liste(bss_l,p,t->section,d);
-									d[bss]=d[bss]+atoi(temp->tok);
-									break;
-								case VIRGULE:
-									break;
-								default:
-									temp->typ=ERREUR;/* ERREUR, on attend que VIRGULE et DECIMAL en argument */
-									break;}
-							p=p->suiv;
-							temp=p->val;}}
-							else{temp->typ=ERREUR;}}
-					else{temp->typ=ERREUR;}/* ERREUR, pas d'autres directives acceptées dans .bss */
+							ajout_liste(bss_l,p,t->section,d);
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+							while ((current_l-temp->nl && !liste_vide(p))==0){
+								switch(temp->typ){
+									case DECIMAL: /* Test validité arguments */
+										ajout_liste(bss_l,p,t->section,d);
+										d[bss]=d[bss]+atoi(temp->tok);
+										break;
+									case VIRGULE:
+										break;
+									default:
+										temp->typ=ERREUR;/* ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										break;}
+								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
+						else{
+							temp->typ=ERREUR;
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
+					else{
+						temp->typ=ERREUR;
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}/* ERREUR, pas d'autres directives acceptées dans .bss */
 					break;
 				case COMMENT:
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 					break;
 				case SYMBOLE:
-					if (!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv)){
+					if (!liste_vide(p->suiv)){
 						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){
-							ajout_liste(bss_l,p,t->section,d);
 							t->lex=*temp;
 							t->deca=d[bss];
 							ajout_tab(s,t);
-							p=p->suiv;
-							temp=p->val;}
+							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
-							temp->typ=ERREUR;}}/* ERREUR, on veut pas d'instruction */
+							temp->typ=ERREUR;
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}/* ERREUR, on veut pas d'instruction */
 					break;
 				default:
-					temp->typ=ERREUR;/* ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE dans cette section */
+					temp->typ=ERREUR;
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/* ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE dans cette section */
 					break;}
 			break;
 		case data:
 			switch (temp->typ){
 				case DIRECTIVE:
-					if (strcmp(temp->tok,".data")==0){;}
+					if (strcmp(temp->tok,".data")==0){
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 					else if (strcmp(temp->tok,".bss")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".word")==0  && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
 						ajout_liste(data_l,p,t->section,d);
-						p=p->suiv;
-						temp=p->val;
-						while (current_l-temp->nl==0  && !liste_vide(p->suiv)){
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+						while (current_l-temp->nl==0  && !liste_vide(p)){
 							switch (temp->typ){
 								case HEXA:
-								if (d[data]%4!=0){
-									d[data]=4+d[data]-d[data]%4;}
+									if (d[data]%4!=0){
+										d[data]=4+d[data]-d[data]%4;}
 									ajout_liste(data_l,p,t->section,d);
 									d[data]=d[data]+4;
 								break;
 								case DECIMAL:
-								if (d[data]%4!=0){
-									d[data]=4+d[data]-d[data]%4;}
+									if (d[data]%4!=0){
+										d[data]=4+d[data]-d[data]%4;}
 									ajout_liste(data_l,p,t->section,d);
 									d[data]=d[data]+4;
 									break;
@@ -165,137 +173,139 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 								default:
 									temp->typ=ERREUR;/* ERREUR, on attend un DECIMAL ou un HEXA */
 									break;}
-							p=p->suiv;
-							temp=p->val;}}
-							else{temp->typ=ERREUR;
-							printf("Pas d arg a .word ligne %d \n",temp->nl);}}
+								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
+							else{
+								temp->typ=ERREUR;
+								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else if (strcmp((temp->tok),".byte")==0  && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
-						ajout_liste(data_l,p,t->section,d);
-						p=p->suiv;
-						temp=p->val;
-						while (current_l-temp->nl==0  && !liste_vide(p->suiv)){
-							switch(temp->typ){
-								case DECIMAL:
-									ajout_liste(data_l,p,t->section,d);
-									d[data]=d[data]+1;
-									break;
-								case HEXA:
-									ajout_liste(data_l,p,t->section,d);
-									d[data]=d[data]+1;
-									break;
-								case VIRGULE:
-									break;
-								default:
-									temp->typ=ERREUR;/* ERREUR, on attend que VIRGULE et DECIMAL en argument */
-									break;}
-							p=p->suiv;
-							temp=p->val;}}
-							else{temp->typ=ERREUR;}}
+							ajout_liste(data_l,p,t->section,d);
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+							while (current_l-temp->nl==0  && !liste_vide(p)){
+								switch(temp->typ){
+									case DECIMAL:
+										ajout_liste(data_l,p,t->section,d);
+										d[data]=d[data]+1;
+										break;
+									case HEXA:
+										ajout_liste(data_l,p,t->section,d);
+										d[data]=d[data]+1;
+										break;
+									case VIRGULE:
+										break;
+									default:
+										temp->typ=ERREUR;/* ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										break;}
+								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
+						else{
+							temp->typ=ERREUR;
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else if (strcmp(temp->tok,".asciiz")==0 && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==CHAINE || ((lexeme*)p->suiv->val)->typ==VIRGULE){
-						ajout_liste(data_l,p,t->section,d);
-						p=p->suiv;
-						temp=p->val;
-						while (current_l-temp->nl==0 && !liste_vide(p->suiv)){
-							switch(temp->typ){
-								case CHAINE:
-									ajout_liste(data_l,p,t->section,d);
-									d[data]=d[data]+strlen(temp->tok)-3;/*-3 Du aux espaces rajoutés par standardise + les guillemets*/
-									break;
-								case VIRGULE:
-									break;
-								default:
-									temp->typ=ERREUR;/*ERREUR, on attend que VIRGULE et DECIMAL en argument */
-									break;}
-								p=p->suiv;
-								temp=p->val;}}
-								else{temp->typ=ERREUR;}}
+							ajout_liste(data_l,p,t->section,d);
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+							while (current_l-temp->nl==0 && !liste_vide(p)){
+								switch(temp->typ){
+									case CHAINE:
+										ajout_liste(data_l,p,t->section,d);
+										d[data]=d[data]+strlen(temp->tok)-3;/*-3 Du aux espaces rajoutés par standardise + les guillemets*/
+										break;
+									case VIRGULE:
+										break;
+									default:
+										temp->typ=ERREUR;/*ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										break;}
+									p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
+						else{
+							temp->typ=ERREUR;
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else if (strcmp((temp->tok),".space")==0 && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
-						ajout_liste(data_l,p,t->section,d);
-						p=p->suiv;
-						temp=p->val;
-						while (current_l-temp->nl==0  && !liste_vide(p->suiv)){
-							switch(temp->typ){
-								case DECIMAL:
-									ajout_liste(data_l,p,t->section,d);
-									d[data]=d[data]+atoi(temp->tok);
-									break;
-								case VIRGULE:
-									break;
-								default:
-									temp->typ=ERREUR;/*ERREUR, on attend que VIRGULE et DECIMAL en argument */
-									break;}
-							p=p->suiv;
-							temp=p->val;}}
-							else{temp->typ=ERREUR;}}
+							ajout_liste(data_l,p,t->section,d);
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+							while (current_l-temp->nl==0  && !liste_vide(p)){
+								switch(temp->typ){
+									case DECIMAL:
+										ajout_liste(data_l,p,t->section,d);
+										d[data]=d[data]+atoi(temp->tok);
+										break;
+									case VIRGULE:
+										break;
+									default:
+										temp->typ=ERREUR;/*ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										break;}
+								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
+						else{
+							temp->typ=ERREUR;
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else{
-						temp->typ=ERREUR;}/*ERREUR, directive dans mauvaise section */
+						temp->typ=ERREUR;
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}/*ERREUR, directive dans mauvaise section */
 					break;
 				case COMMENT:
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 					break;
 				case SYMBOLE:
-					if (!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv)){
+					if (!liste_vide(p->suiv)){
 						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){
-							ajout_liste(data_l,p,t->section,d);
 							t->lex=*temp;
 							t->deca=d[data];
 							ajout_tab(s,t);
-							p=p->suiv;
-							temp=p->val;}
-						else{
-							temp->typ=ERREUR;/*ERREUR, on veut pas d'instruction */}}
+							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
+					else{
+						temp->typ=ERREUR;
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR, on veut pas d'instruction */}
 					break;
 
 				default:
-					temp->typ=ERREUR;/*ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE */
+					temp->typ=ERREUR;
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE */
 					break;}
 			break;
 		case text:
 			switch(temp->typ){
 				case DIRECTIVE:
-					if (strcmp(temp->tok,".text")==0){;}
+					if (strcmp(temp->tok,".text")==0){
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 					else if (strcmp(temp->tok,".bss")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".data")==0){init_symb(t);}
 					else {
-						temp->typ=ERREUR;/*ERREUR on attend aucune DIRECTIVE autre que de section */}
+						temp->typ=ERREUR;
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR on attend aucune DIRECTIVE autre que de section */}
 					break;
 				case COMMENT:
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 					break;
 				case SYMBOLE:
-					if (!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv)){
+					if (!liste_vide(p->suiv)){
 						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){
-							ajout_liste(text_l,p,t->section,d);
 							t->lex=*temp;
 							t->deca=d[text];
 							ajout_tab(s,t);
-							p=p->suiv;
-							temp=p->val;}
+							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
-							while (current_l-temp->nl==0 && !liste_vide(p->suiv)){
+							while (current_l-temp->nl==0 && !liste_vide(p)){
 								switch (temp->typ){
 									case VIRGULE:
 										break;
 									default:
 										ajout_liste(text_l,p,t->section,d);
 										break;}
-								p=p->suiv;
-								temp=p->val;}
+								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 							d[text]=d[text]+4;}}
+					else{
+						temp->typ=ERREUR;
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 					break;
 				default:
-					temp->typ=ERREUR;/*ERREUR, on attend pas autre chose */
+					temp->typ=ERREUR;
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR, on attend pas autre chose */
 					break;}
-			break;}
-		/*printf ("Décalage de bss : %d, data : %d, text : %d a la ligne %d \n",d[0],d[1],d[2],((lexeme*)p->val)->nl);*/
-		if (liste_vide(p->suiv)){return;}
-		else if (t->section==INI && temp->typ==DIRECTIVE){;}
-		else if(current_l-temp->nl==0 && !liste_vide(p->suiv)){
-			p=p->suiv;
-			temp=p->val;}
-		else{;}}
+			break;
+		default:
+			temp->typ=ERREUR;
+			p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+			break;}}
 	free(d);
 	free(p);
-	free(t);
-}
+	free(t);}

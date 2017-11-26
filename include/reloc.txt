@@ -1,0 +1,24 @@
+#ifndef _RELOC_H_
+#define _RELOC_H_
+
+#include <stdio.h>
+#include <verif.h>
+#include <symb.h>
+
+typedef enum reltyp_e {
+  R_MIPS_32, R_MIPS_26, R_MIPS_LO16, R_MIPS_HI16, ERR_TYP_RELOC,
+} reltyp;
+
+typedef struct reloc_s {
+  int dec_inst;
+  symb* etiquette;
+      /*lexeme lex;                             // Lexeme observé
+      	sect section;                           // Section dans laquelle on est
+      	int deca;                               // Décalage en octets */
+  reltyp rel_type;
+} reloc;
+
+reloc* init_entree_reloc(int, opestruct*, symb*);
+reloc* creer_table_reloc();
+
+#endif
