@@ -12,10 +12,12 @@
 
 #include <global.h>
 #include <notify.h>
+
 #include <lex.h>
 #include <liste.h>
 #include <symb.h>
 #include <dico.h>
+#include <verif.h>
 
 /**
  * @param exec Name of executable.
@@ -98,17 +100,42 @@ int main ( int argc, char *argv[] ) {
     printf("\n----------------------------Collection BSS-----------------------------------\n\n");
     visualiser_liste(*bss_l,&affiche_col);
 
-    free(s);
-
     /* Chargement du dictionnaire*/
     int nb_inst = 29;
-        inst_def_t * tab;
-        tab=lect_dico_int("tests/dico.s", &nb_inst);
-        int i;
-        printf("\nDictionnaire d'instructions\n\n");
-        for (i=0;i<29;i++) {
-          printf("%s %c %d\n", tab[i].symbole, tab[i].type, tab[i].nb_op);
-        }
+    inst_def_t * tab;
+    tab=lect_dico_int("tests/dico.s", &nb_inst);
+    int i;
+    /*printf("\nDictionnaire d'instructions\n\n");
+    for (i=0;i<29;i++) {
+   	 printf("%s %c %d %s\n", tab[i].symbole, tab[i].type, tab[i].nb_op,tab[i].arg);}*/
+
+    /* Examen argument instruction data */
+    Liste arg=verif_arg_text(text_l,tab,nb_inst,s);
+    Liste p=arg;
+    i=0;
+    instruction* inst;
+    affiche_erreurs_dico(*text_l);
+    while(!liste_vide(p)){
+	inst=p->val;
+	while (i<((instruction*)p->val)->inst_def.nb_op){
+		if(inst->Operande[i].ope_typ==REG){
+			printf("On voit l'opérande %s de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->reg,inst->inst_def.symbole,inst->inst->lex.nl);}
+		if(inst->Operande[i].ope_typ==IMD){
+			printf("On voit l'opérande %d de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->imd,inst->inst_def.symbole,inst->inst->lex.nl);}
+		if(inst->Operande[i].ope_typ==SA){
+			printf("On voit l'opérande %d de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->sa,inst->inst_def.symbole,inst->inst->lex.nl);}
+		if(inst->Operande[i].ope_typ==ETI){
+			printf("On voit l'opérande %s de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->eti,inst->inst_def.symbole,inst->inst->lex.nl);}
+		i++;}
+	i=0;
+	p=p->suiv;}
+	
+    free(tab);
+    free(data_l);
+    free(text_l);
+    free(bss_l);
+    free(s);
+
     /* A faire : Verification des opérandes des instructions */
 
     /* ---------------- Free memory and terminate -------------------*/

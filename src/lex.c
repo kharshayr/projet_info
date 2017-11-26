@@ -33,8 +33,8 @@ void affiche_erreurs_lex(Liste l){
 
 lexeme* init_lex(char* token, int n) {
     lexeme* l = calloc(1,sizeof(*l));
-    l->tok=calloc(1,strlen(token)*sizeof(char));
-    l->tok=strcpy(l->tok,token);
+    l->tok=calloc(1,(strlen(token)+1)*sizeof(char));
+    strcpy(l->tok,token);
     l->typ=INIT;
     l->nl=n;
     return l;
