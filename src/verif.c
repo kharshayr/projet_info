@@ -50,11 +50,6 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
 								case REGISTRE:
-									if(temp->lex.tok[1]=='t'){
-										if(atoi(temp->lex.tok+2)<=7){
-											sprintf(temp->lex.tok+1,"%d",8+atoi(temp->lex.tok+2));}
-										else if (atoi(temp->lex.tok+2)==8 || atoi(temp->lex.tok+2)==9){
-											sprintf(temp->lex.tok+1,"%d",16+atoi(temp->lex.tok+2));}}
 									nb_op=nb_op-1;
 									break;
 								case DECIMAL:
@@ -100,11 +95,6 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
 								case REGISTRE:
-									if(temp->lex.tok[1]=='t'){
-										if(atoi(temp->lex.tok+2)<=7){
-											sprintf(temp->lex.tok+1,"%d",8+atoi(temp->lex.tok+2));}
-										else if (atoi(temp->lex.tok+2)==8 || atoi(temp->lex.tok+2)==9){
-											sprintf(temp->lex.tok+1,"%d",16+atoi(temp->lex.tok+2));}}
 									if (nb_op>1){
 										nb_op=nb_op-1;}
 									break;
@@ -118,15 +108,11 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 										nb_op=nb_op-1;}
 									break;
 								case SYMBOLE:
-									if (rech_mot(temp->lex.tok,s)!=NULL){
-										if (nb_op==1){
-											nb_op=nb_op-1;}
-										else{
-											printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
-											nb_op=nb_op-1;}}
+									if (nb_op==1){
+										nb_op=nb_op-1;}
 									else{
-										printf("Reference %s ligne %d non definie dans le code\n",temp->lex.tok,temp->lex.nl);
-										temp->lex.typ=ERREUR;}
+										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
+										nb_op=nb_op-1;}
 									break;
 								default:
 									temp->lex.typ=ERREUR;
@@ -167,15 +153,11 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
 								case SYMBOLE:
-									if (rech_mot(temp->lex.tok,s)!=NULL){
-										if (nb_op==1){
-											nb_op=nb_op-1;}
-										else{
-											printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
-											nb_op=nb_op-1;}}
+									if (nb_op==1){
+										nb_op=nb_op-1;}
 									else{
-										printf("Reference %s ligne %d non definie dans le code\n",temp->lex.tok,temp->lex.nl);
-										temp->lex.typ=ERREUR;}
+										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
+										nb_op=nb_op-1;}
 									break;
 								case VIRGULE:
 									break;

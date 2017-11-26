@@ -9,5 +9,5 @@ byebye:
     JAL 1
   J byebye
 .data
-lunchtime : .word 12,boucle
+lunchtime : .word 12
 .asciiz "blabla "

@@ -168,8 +168,15 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									ajout_liste(data_l,p,t->section,d);
 									d[data]=d[data]+4;
 									break;
+								case SYMBOLE:
+									if (d[data]%4!=0){
+										d[data]=4+d[data]-d[data]%4;}
+									ajout_liste(data_l,p,t->section,d);
+									d[data]=d[data]+4;
+									break;
 								case VIRGULE:
 									break;
+
 								default:
 									temp->typ=ERREUR;/* ERREUR, on attend un DECIMAL ou un HEXA */
 									break;}
