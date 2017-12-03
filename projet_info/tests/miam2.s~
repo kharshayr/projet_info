@@ -1,0 +1,4 @@
+# allons au ru
+.set noreorder
+.data
+.word 2,7

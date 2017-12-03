@@ -33,7 +33,6 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 	symb* current_inst=temp;
 	int index_dico,nb_op,current_nl,i;
 	char type;
-	char* arg;
 	while (!liste_vide(p)){
 		current_nl=temp->lex.nl;
 		switch (temp->lex.typ){
@@ -47,27 +46,20 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 					q=p;
 					nb_op=dico[index_dico].nb_op;
 					type=dico[index_dico].type;
-					arg=dico[index_dico].arg;
 					if (type=='R'){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
 								case REGISTRE:
-									if (nb_op>1){
-										nb_op=nb_op-1;}
-									else if (nb_op==1 && strcmp(arg,"R")==0){
-										nb_op=nb_op-1;}
-									else{
-										printf("Dernier argument invalide dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
-									break;
-								case VIRGULE:
+									nb_op=nb_op-1;
 									break;
 								case DECIMAL:
-									if (nb_op==1 && strcmp(arg,"SA")==0){
+									if (nb_op==1){
 										nb_op=nb_op-1;}
-									else if (nb_op>1){
-										printf("Immediate pas a la bonne place ou n'attend pas un Shift Amount dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
 									else{
-										printf("Dernier argument invalide dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
+										printf("Shift amount pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
+										nb_op=nb_op-1;}
+									break;
+								case VIRGULE:
 									break;
 								default:
 									temp->lex.typ=ERREUR;
@@ -105,26 +97,22 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 								case REGISTRE:
 									if (nb_op>1){
 										nb_op=nb_op-1;}
-									else{
-										printf("Dernier argument invalide dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
 									break;
 								case VIRGULE:
 									break;
 								case DECIMAL:
-									if (nb_op==1 && strcmp(arg,"I")==0){
+									if (nb_op==1){
 										nb_op=nb_op-1;}
-									else if (nb_op>1){
-										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
 									else{
-										printf("Dernier argument invalide dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
+										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
+										nb_op=nb_op-1;}
 									break;
 								case SYMBOLE:
-									if (nb_op==1 && strcmp(arg,"I")==0){
+									if (nb_op==1){
 										nb_op=nb_op-1;}
-									else if (nb_op>1){
-										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);printf("%s \n",temp->lex.tok);}
 									else{
-										printf("Dernier argument invalide dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
+										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
+										nb_op=nb_op-1;}
 									break;
 								default:
 									temp->lex.typ=ERREUR;
