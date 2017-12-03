@@ -118,6 +118,14 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 									else{
 										printf("Dernier argument invalide dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
 									break;
+								case HEXA:
+									if (nb_op==1 && strcmp(arg,"I")==0){
+										nb_op=nb_op-1;}
+									else if (nb_op>1){
+										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
+									else{
+										printf("Dernier argument invalide dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);}
+									break;
 								case SYMBOLE:
 									if (nb_op==1 && strcmp(arg,"I")==0){
 										nb_op=nb_op-1;}
@@ -156,6 +164,11 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille,symb* s){
 										(instr->Operande)[i].ope_typ=IMD;
 										(instr->Operande)[i].ope_val->imd=(short)atoi(temp->lex.tok);
 										break;
+									/*case HEXA:
+										instr->Operande[i].ope_val=calloc(dico[index_dico].nb_op,sizeof(short));
+										(instr->Operande)[i].ope_typ=IMD;
+										(instr->Operande)[i].ope_val->imd=(short)atoi(temp->lex.tok);
+										break;*/
 									default:
 										break;}
 								i++;
