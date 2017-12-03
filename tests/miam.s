@@ -1,10 +1,10 @@
 # allons au ru
 .set noreorder
 .text
-    ADD $t1,$t2,$t3
-    ROTR $t1, $t2, 3
+    ADD $t1,$t2,2
+    ROTR $t1, $t2, 2
     J boucle
-    addi $t1, $t2, byebye
+    addi $t1, $t2, 3
 byebye:
     JAL 1
   J byebye
