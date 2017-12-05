@@ -88,7 +88,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 	if (liste_vide(p)){
 		printf("Pas d'instruction dans text ! \n");
 		return list_instr;}
-	symb* temp=p->val;
+	symb* temp=(symb*)p->val;
 	symb* current_inst=temp;
 	int index_dico,nb_op,current_nl,i;
 	char type;
@@ -98,7 +98,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 		current_nl=temp->lex.nl;
 		switch (temp->lex.typ){
 			case SYMBOLE:
-				strtoupper(temp->lex.tok);
+				strtoupper((temp->lex).tok);
 				current_inst=temp;
 				index_dico=recherche_instr(temp->lex.tok,dico,taille);
 				if(!liste_vide(p->suiv)){
@@ -122,7 +122,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 									else if (nb_op==1 && strcmp(arg,"R")==0){;}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-									current_inst->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;}
 									nb_op=nb_op-1;
 									break;
 								case VIRGULE:

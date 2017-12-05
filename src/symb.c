@@ -7,6 +7,31 @@
 #include<liste.h>
 #include<lex.h>
 #include<symb.h>
+#include<dico.h>
+void pseudo_instr(Liste p, int nl){
+	lexeme* temp=p->val;
+	Liste r=p->suiv;
+	strtoupper(temp->tok);
+	if (strcmp(temp->tok,"NOP")==0){
+		temp->tok[0]='S';
+		temp->tok[1]='L';
+		temp->tok[2]='L';
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok="$0";temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok="$0";temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok="0";temp->typ=DECIMAL;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=r;}}
 
 void affiche_tab(symb* s){ /* Affiche uniquement les etiquettes stockées */
 	symb* t=s;
@@ -323,6 +348,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							ajout_tab(s,t);
 							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
+							pseudo_instr(p,temp->nl);
 							while (current_l-temp->nl==0 && !liste_vide(p)){
 								switch (temp->typ){
 									case VIRGULE:
