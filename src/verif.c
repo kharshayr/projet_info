@@ -8,6 +8,11 @@
 #include<dico.h>
 #include<verif.h>
 
+char* reg_mnemo[] = {"$zero", "$0", "$at", "$1", "$v0", "$2", "$v1", "$3", "$a0", "$4", "$a1", "$5", "$a2", "$6", "$a3", "$7",
+ "$t0", "$8", "$t1", "$9", "$t2", "$10", "$t3", "$11", "$t4", "$12", "$t5", "$13", "$t6", "$14", "$t7", "$15", "$s0",
+  "$16", "$s1", "$17", "$s2", "$18", "$s3", "$19", "$s4", "$20", "$s5", "$21", "$s6", "$22", "$s7", "$23", "$t8",
+  "$24", "$t9", "$25", "$k0", "$26", "$k1", "$27", "$gp", "$28", "$sp", "$29", "$fp", "$30", "$ra", "$31"};
+
 int recherche_instr(char* instr,inst_def_t* dico,int taille){
 	inst_def_t* p=dico;
 	while (p-dico<taille){
@@ -16,7 +21,16 @@ int recherche_instr(char* instr,inst_def_t* dico,int taille){
 		p++;}
 	return (-1);}
 
-symb* rech_mot(char* mot, symb* tab){
+char* rech_mot(char* mot, char** tab){
+	int i=0;
+	while (i<64){
+		if(strcmp(tab[i],mot)==0){
+			if(i%2==0){return tab[i+1];}
+			else if (i%2==1){return tab[i];}}
+		i++;}
+	return NULL;}
+
+symb* rech_mot_symb(char* mot, symb* tab){
 	int i=hachage(mot);
 	if((tab+i)->lex.tok!=0){
 		if(strcmp((tab+i)->lex.tok,mot)==0) {return tab+i;}}
@@ -79,6 +93,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 	int index_dico,nb_op,current_nl,i;
 	char type;
 	char* arg;
+	char* mnemo;
 	while (!liste_vide(p)){
 		current_nl=temp->lex.nl;
 		switch (temp->lex.typ){
@@ -97,6 +112,12 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
 								case REGISTRE:
+									mnemo=rech_mot(temp->lex.tok,reg_mnemo);
+									if(mnemo!=NULL){
+										temp->lex.tok=mnemo;}
+									else{
+										printf("Nom de registre inconnu pour %s \n",temp->lex.tok);
+										temp->lex.typ=ERREUR;}
 									if (nb_op>1){;}
 									else if (nb_op==1 && strcmp(arg,"R")==0){;}
 									else{
@@ -149,6 +170,12 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
 								case REGISTRE:
+									mnemo=rech_mot(temp->lex.tok,reg_mnemo);
+									if(mnemo!=NULL){
+										temp->lex.tok=mnemo;}
+									else{
+										printf("Nom de registre inconnu pour %s \n",temp->lex.tok);
+										temp->lex.typ=ERREUR;}
 									if (nb_op>1){;}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);}
@@ -210,6 +237,12 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
 								case REGISTRE:
+									mnemo=rech_mot(temp->lex.tok,reg_mnemo);
+									if(mnemo!=NULL){
+										temp->lex.tok=mnemo;}
+									else{
+										printf("Nom de registre inconnu pour %s \n",temp->lex.tok);
+										temp->lex.typ=ERREUR;}
 									if (nb_op>1){;}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);}

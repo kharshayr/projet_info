@@ -1,7 +1,7 @@
 # allons au ru
 .set noreorder
 .text
-   ADD $t1,$t2,$t2
+   ADD $t1,$t2, $t1
     ROTR $t1, $t2, 0x55
     J boucle
     addi $t1, $t2, 3

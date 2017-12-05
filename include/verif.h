@@ -32,7 +32,8 @@ typedef struct instruction_s {
         opeval ope_val; */
 } instruction;
 
-symb* rech_mot(char*,symb*);
+char* rech_mot(char*, char**);
+symb* rech_mot_symb(char*,symb*);
 Liste verif_arg_data(Liste*);
 Liste verif_arg_text(Liste*, inst_def_t *, int);
 int recherche_instr(char*, inst_def_t *, int);
