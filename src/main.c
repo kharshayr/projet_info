@@ -110,26 +110,20 @@ int main ( int argc, char *argv[] ) {
    	 printf("%s %c %d %s\n", tab[i].symbole, tab[i].type, tab[i].nb_op,tab[i].arg);}*/
 
     /* Examen argument instruction data */
-    Liste arg=verif_arg_text(text_l,tab,nb_inst,s);
-    Liste p=arg;
-    i=0;
+    Liste arg_text=verif_arg_text(text_l,tab,nb_inst);
     instruction* inst;
     affiche_erreurs_dico(*text_l);
+    Liste arg_data=verif_arg_data(data_l);
+    Liste p=arg_data;
     while(!liste_vide(p)){
 	inst=p->val;
-	while (i<((instruction*)p->val)->inst_def.nb_op){
-		if(inst->Operande[i].ope_typ==REG){
-			printf("On voit l'opérande %s de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->reg,inst->inst_def.symbole,inst->inst->lex.nl);}
-		if(inst->Operande[i].ope_typ==IMD){
-			printf("On voit l'opérande %d de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->imd,inst->inst_def.symbole,inst->inst->lex.nl);}
-		if(inst->Operande[i].ope_typ==SA){
-			printf("On voit l'opérande %d de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->sa,inst->inst_def.symbole,inst->inst->lex.nl);}
-		if(inst->Operande[i].ope_typ==ETI){
-			printf("On voit l'opérande %s de l'instruction %s ligne %d\n",inst->Operande[i].ope_val->eti,inst->inst_def.symbole,inst->inst->lex.nl);}
-		i++;}
-	i=0;
+	if(inst->Operande->ope_typ==WRD){
+		printf("Opérande %lu instruction %s ligne %d\n",inst->Operande->ope_val->wrd,inst->inst->lex.tok,inst->inst->lex.nl);}
+	else if(inst->Operande->ope_typ==CHN){
+		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->chaine,inst->inst->lex.tok,inst->inst->lex.nl);}
+	else if(inst->Operande->ope_typ==ETI){
+		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->eti,inst->inst->lex.tok,inst->inst->lex.nl);}
 	p=p->suiv;}
-	
     free(tab);
     free(data_l);
     free(text_l);
