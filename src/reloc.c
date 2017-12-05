@@ -24,11 +24,11 @@ reloc* init_entree_reloc_text(instruction* i, int num_op, symb* symb_t) {
 
       case ABS:
         r->rel_type = R_MIPS_26;
-        r->rel_adresse = d;
+        r->rel_adresse = d>>2;
         break;
 
       case REL:
-        i->Operande[num_op]->ope_val.rel= (d+4 - e->deca)>>2;
+        i->Operande[num_op]->ope_val.rel= (e->deca - (d+4))>>2;
         i->Operande[num_op]->ope_typ=REL;
         return NULL;
         break;
