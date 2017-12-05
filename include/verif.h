@@ -14,7 +14,7 @@ typedef union opeval_u {
   char* eti;
   unsigned short sa;
   unsigned int abs;
-  char* ofb; /* "chaine de C pour  */
+  char* ofb;
 } opeval;
 
 typedef struct opestruct_s {

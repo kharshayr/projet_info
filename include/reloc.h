@@ -6,11 +6,11 @@
 #include <symb.h>
 
 typedef enum reltyp_e {
-  R_MIPS_32, R_MIPS_26, R_MIPS_LO16, R_MIPS_HI16, ERR_TYP_RELOC,
+  R_MIPS_32, R_MIPS_26, R_MIPS_LO16, R_MIPS_HI16, UNKNOWN,
 } reltyp;
 
 typedef struct reloc_s {
-  int dec_inst;
+  int rel_addresse;
   symb* etiquette;
       /*lexeme lex;                             // Lexeme observé
       	sect section;                           // Section dans laquelle on est
@@ -18,7 +18,7 @@ typedef struct reloc_s {
   reltyp rel_type;
 } reloc;
 
-reloc* init_entree_reloc(int, opestruct*, symb*);
-reloc* creer_table_reloc();
+reloc* init_entree_reloc(instruction*, symb*, int);
+reloc* creer_table_reloc(Liste, symb*);
 
 #endif
