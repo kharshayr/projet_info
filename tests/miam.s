@@ -2,8 +2,8 @@
 .set noreorder
 .text
    ADD $t1,$t2, $t1
-    ROTR $t1, $t2, 0x55
-    J boucle
+    ROTR $t1, $t2, 1
+    MOVE $t2, $t1
     addi $t1, $t2, 3
 byebye:
     JAL 1

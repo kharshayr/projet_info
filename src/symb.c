@@ -1,37 +1,75 @@
 #define N 100
 
-#include<stdlib.h>
-#include<stdio.h>
-#include<string.h>
-
-#include<liste.h>
-#include<lex.h>
 #include<symb.h>
-#include<dico.h>
+
 void pseudo_instr(Liste p, int nl){
 	lexeme* temp=p->val;
 	Liste r=p->suiv;
 	strtoupper(temp->tok);
 	if (strcmp(temp->tok,"NOP")==0){
-		temp->tok[0]='S';
-		temp->tok[1]='L';
-		temp->tok[2]='L';
+		temp->tok=strdup("SLL");
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok="$0";temp->typ=REGISTRE;temp->nl=nl;
+		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok="$0";temp->typ=REGISTRE;temp->nl=nl;
+		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok="0";temp->typ=DECIMAL;temp->nl=nl;
+		temp->tok=strdup("0");temp->typ=DECIMAL;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
-		p->suiv=r;}}
+		p->suiv=r;}
+	else if (strcmp(temp->tok,"MOVE")==0){
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE){
+			p=p->suiv;}
+		else{
+			((lexeme*)(p->val))->typ==ERREUR;
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==VIRGULE){
+			p=p->suiv;}
+		else{
+			((lexeme*)(p->val))->typ==ERREUR;
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE){
+			p=p->suiv;
+			r=p->suiv;}
+		else{
+			((lexeme*)(p->val))->typ==ERREUR;
+			return;}
+		temp->tok=strdup("ADD");
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=r;}
+	else if (strcmp(temp->tok,"NEG")==0){
+		if (((lexeme*)(p->suiv->val))->typ!=REGISTRE){((lexeme*)(p->suiv->val))->typ=ERREUR;return;}
+		if (((lexeme*)(p->suiv->suiv->val))->typ!=VIRGULE){((lexeme*)(p->suiv->val))->typ=ERREUR;return;}
+		if (((lexeme*)(p->suiv->suiv->suiv->val))->typ==REGISTRE){
+			r=p->suiv->suiv->suiv->suiv;}
+		else{
+			((lexeme*)(p->suiv->val))->typ=ERREUR;
+			return;}
+		p=p->suiv->suiv->suiv;
+		temp->tok=strdup("SUB");
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=r;}
+	}
 
 void affiche_tab(symb* s){ /* Affiche uniquement les etiquettes stockées */
 	symb* t=s;
@@ -350,11 +388,14 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 						else{
 							pseudo_instr(p,temp->nl);
 							while (current_l-temp->nl==0 && !liste_vide(p)){
+								if (temp->typ==HEXA){
+									to_decimal(temp);}
 								switch (temp->typ){
 									case VIRGULE:
 										break;
-									case HEXA:
-										to_decimal(temp);
+									case ERREUR:
+										while (current_l-temp->nl==0 && !liste_vide(p)){p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
+										break;
 									default:
 										ajout_liste(text_l,p,t->section,d);
 										break;}

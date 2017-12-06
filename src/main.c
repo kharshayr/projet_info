@@ -104,26 +104,19 @@ int main ( int argc, char *argv[] ) {
     int nb_inst = 29;
     inst_def_t * tab;
     tab=lect_dico_int("tests/dico.s", &nb_inst);
-    int i;
     /*printf("\nDictionnaire d'instructions\n\n");
+    int i;
     for (i=0;i<29;i++) {
    	 printf("%s %c %d %s\n", tab[i].symbole, tab[i].type, tab[i].nb_op,tab[i].arg);}*/
 
     /* Examen argument instruction data */
     Liste arg_text=verif_arg_text(text_l,tab,nb_inst);
-    instruction* inst;
     affiche_erreurs_dico(*text_l);
     Liste arg_data=verif_arg_data(data_l);
-    Liste p=arg_data;
-    while(!liste_vide(p)){
-	inst=p->val;
-	if(inst->Operande->ope_typ==WRD){
-		printf("Opérande %lu instruction %s ligne %d\n",inst->Operande->ope_val->wrd,inst->inst->lex.tok,inst->inst->lex.nl);}
-	else if(inst->Operande->ope_typ==CHN){
-		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->chaine,inst->inst->lex.tok,inst->inst->lex.nl);}
-	else if(inst->Operande->ope_typ==ETI){
-		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->eti,inst->inst->lex.tok,inst->inst->lex.nl);}
-	p=p->suiv;}
+
+    affiche_liste_ope_text(arg_text);
+    /*affiche_liste_ope_data(arg_data);*/
+
     free(tab);
     free(data_l);
     free(text_l);

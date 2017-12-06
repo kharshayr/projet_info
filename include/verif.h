@@ -2,6 +2,8 @@
 #define _VERIF_H_
 
 #include <stdio.h>
+#include <symb.h>
+#include <dico.h>
 
 typedef enum opetyp_e {
   REG, IMD, REL, SA, ABS, OFB, ERR_TYP_OP ,ETI, WRD, CHN
@@ -32,6 +34,8 @@ typedef struct instruction_s {
         opeval ope_val; */
 } instruction;
 
+void affiche_liste_ope_data(Liste);
+void affiche_liste_ope_text(Liste);
 char* rech_mot(char*, char**);
 symb* rech_mot_symb(char*,symb*);
 Liste verif_arg_data(Liste*);

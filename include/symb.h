@@ -3,6 +3,14 @@
 
 #define N 100
 
+#include<stdlib.h>
+#include<string.h>
+
+#include<lex.h>
+#include<symb.h>
+#include<dico.h>
+
+
 typedef enum sec{
 	bss, data, text, INI,} sect;
 

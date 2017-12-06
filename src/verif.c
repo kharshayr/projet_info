@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include<lex.h>
-#include<liste.h>
-#include<symb.h>
-#include<dico.h>
 #include<verif.h>
 
 char* reg_mnemo[] = {"$zero", "$0", "$at", "$1", "$v0", "$2", "$v1", "$3", "$a0", "$4", "$a1", "$5", "$a2", "$6", "$a3", "$7",
@@ -20,6 +12,40 @@ int recherche_instr(char* instr,inst_def_t* dico,int taille){
 			return (p-dico);}
 		p++;}
 	return (-1);}
+
+void affiche_liste_ope_text(Liste arg_text){
+    printf("\n-------------------------Collection Operande text-----------------------------\n");
+    int i;
+    Liste p=arg_text;
+    instruction* inst;
+    while(!liste_vide(p)){
+	i=0;
+	inst=p->val;
+	while (i<inst->inst_def.nb_op && !liste_vide(p)){
+		if(inst->Operande[i].ope_typ==IMD){
+			printf("Opérande %hd instruction %s ligne %d\n",inst->Operande[i].ope_val->imd,inst->inst->lex.tok,inst->inst->lex.nl);}
+		else if(inst->Operande[i].ope_typ==REG){
+			printf("Opérande %s instruction %s ligne %d\n",inst->Operande[i].ope_val->reg,inst->inst->lex.tok,inst->inst->lex.nl);}
+		else if(inst->Operande[i].ope_typ==ETI){
+			printf("Opérande %s instruction %s ligne %d\n",inst->Operande[i].ope_val->eti,inst->inst->lex.tok,inst->inst->lex.nl);}
+		else if(inst->Operande[i].ope_typ==SA){
+			printf("Opérande %hd instruction %s ligne %d\n",inst->Operande[i].ope_val->sa,inst->inst->lex.tok,inst->inst->lex.nl);}
+		i++;}
+	p=p->suiv;}}
+
+void affiche_liste_ope_data(Liste arg_data){
+    printf("\n-------------------------Collection Operande data-----------------------------\n");
+    Liste p=arg_data;
+    instruction* inst;
+    while(!liste_vide(p)){
+	inst=p->val;
+	if(inst->Operande->ope_typ==WRD){
+		printf("Opérande %lu instruction %s ligne %d\n",inst->Operande->ope_val->wrd,inst->inst->lex.tok,inst->inst->lex.nl);}
+	else if(inst->Operande->ope_typ==CHN){
+		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->chaine,inst->inst->lex.tok,inst->inst->lex.nl);}
+	else if(inst->Operande->ope_typ==ETI){
+		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->eti,inst->inst->lex.tok,inst->inst->lex.nl);}
+	p=p->suiv;}}
 
 char* rech_mot(char* mot, char** tab){
 	int i=0;
