@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include<lex.h>
 #include<liste.h>
@@ -14,15 +15,16 @@ void affiche_erreurs_dico(Liste l){
 	    l=l->suiv;}
 }
 
-void strtoupper(char *str){
-    for ( ; *str ; str++)
-        *str = toupper(*str);}
+void strtoupper(char* str){
+	int i;
+	for (i=0;i<strlen(str);i++){
+        	str[i] = (char)toupper((int)str[i]);}}
 
 inst_def_t * lect_dico_int(char* nomFichierDico, int* p_nb_inst) {
  FILE *f1;
  int i;
- char s1[512];
- char s2[512];
+ char* s1=malloc(512);
+ char* s2=malloc(512);
  inst_def_t * tab;
  f1=fopen(nomFichierDico,"r");
  if (f1==NULL) {
@@ -39,8 +41,10 @@ inst_def_t * lect_dico_int(char* nomFichierDico, int* p_nb_inst) {
      free(tab);
      return NULL;
    }
-   tab[i].symbole=strdup(s1);
-   tab[i].arg=strdup(s2);
+   tab[i].symbole=s1;
+   tab[i].arg=s2;
+   s1=malloc(512);
+   s2=malloc(512);
  }
  fclose(f1);
  return tab;

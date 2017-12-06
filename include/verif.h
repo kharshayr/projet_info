@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 typedef enum opetyp_e {
-  REG, IMD, REL, SA, ABS, OFB, ERR_TYP_OP ,ETI
+  REG, IMD, REL, SA, ABS, OFB, ERR_TYP_OP ,ETI, WRD, CHN
 } opetyp;
 
 typedef union opeval_u {
@@ -14,7 +14,9 @@ typedef union opeval_u {
   char* eti;
   unsigned short sa;
   unsigned int abs;
-  char* ofb;
+  char* ofb; /* "chaine de C pour  */
+  unsigned long wrd;
+  char* chaine;
 } opeval;
 
 typedef struct opestruct_s {
@@ -30,8 +32,10 @@ typedef struct instruction_s {
         opeval ope_val; */
 } instruction;
 
-symb* rech_mot(char*,symb*);
-Liste verif_arg_text(Liste*, inst_def_t *, int,symb*);
+char* rech_mot(char*, char**);
+symb* rech_mot_symb(char*,symb*);
+Liste verif_arg_data(Liste*);
+Liste verif_arg_text(Liste*, inst_def_t *, int);
 int recherche_instr(char*, inst_def_t *, int);
 
 #endif

@@ -7,6 +7,31 @@
 #include<liste.h>
 #include<lex.h>
 #include<symb.h>
+#include<dico.h>
+void pseudo_instr(Liste p, int nl){
+	lexeme* temp=p->val;
+	Liste r=p->suiv;
+	strtoupper(temp->tok);
+	if (strcmp(temp->tok,"NOP")==0){
+		temp->tok[0]='S';
+		temp->tok[1]='L';
+		temp->tok[2]='L';
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok="$0";temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok="$0";temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok="0";temp->typ=DECIMAL;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=r;}}
 
 void affiche_tab(symb* s){ /* Affiche uniquement les etiquettes stockées */
 	symb* t=s;
@@ -66,6 +91,27 @@ Liste* init_liste(){
 		return l;
 }
 
+void to_decimal(lexeme* hexa){
+	int deca=0;
+	int i,n=strlen(hexa->tok);
+	int q=1;
+	if (*(hexa->tok)=='0'){
+		for (i=0;i<n-2;i++){
+			if ((hexa->tok)[n-1-i]<57){
+				deca+=(*((hexa->tok)+n-i-1)-48)*q;}
+			else{
+				deca+=(*((hexa->tok)+n-i-1)-87)*q;}
+			q=q*16;}}
+	else{
+		for (i=0;i<n-2;i++){
+			if ((hexa->tok)[n-1-i]<57){
+				deca+=(*((hexa->tok)+n-i-1)-48)*q;}
+			else{
+				deca+=(*((hexa->tok)+n-i-1)-87)*q;}
+			q=q*16;}}
+	sprintf(hexa->tok,"%d",deca);
+	hexa->typ=DECIMAL;}
+
 void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 	int* d=calloc(3,sizeof(int));/* Stockage et initialisation des decalages [bss,data,text] */
 	Liste p=l;
@@ -111,6 +157,10 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 										ajout_liste(bss_l,p,t->section,d);
 										d[bss]=d[bss]+atoi(temp->tok);
 										break;
+									case HEXA:
+										to_decimal(temp);
+										ajout_liste(bss_l,p,t->section,d);
+										d[bss]=d[bss]+atoi(temp->tok);
 									case VIRGULE:
 										break;
 									default:
@@ -157,6 +207,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 						while (current_l-temp->nl==0  && !liste_vide(p)){
 							switch (temp->typ){
 								case HEXA:
+									to_decimal(temp);
 									if (d[data]%4!=0){
 										d[data]=4+d[data]-d[data]%4;}
 									ajout_liste(data_l,p,t->section,d);
@@ -195,6 +246,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 										d[data]=d[data]+1;
 										break;
 									case HEXA:
+										to_decimal(temp);
 										ajout_liste(data_l,p,t->section,d);
 										d[data]=d[data]+1;
 										break;
@@ -232,6 +284,11 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while (current_l-temp->nl==0  && !liste_vide(p)){
 								switch(temp->typ){
+									case HEXA:
+										to_decimal(temp);
+										ajout_liste(bss_l,p,t->section,d);
+										d[bss]=d[bss]+atoi(temp->tok);
+										break;
 									case DECIMAL:
 										ajout_liste(data_l,p,t->section,d);
 										d[data]=d[data]+atoi(temp->tok);
@@ -291,10 +348,13 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							ajout_tab(s,t);
 							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
+							pseudo_instr(p,temp->nl);
 							while (current_l-temp->nl==0 && !liste_vide(p)){
 								switch (temp->typ){
 									case VIRGULE:
 										break;
+									case HEXA:
+										to_decimal(temp);
 									default:
 										ajout_liste(text_l,p,t->section,d);
 										break;}

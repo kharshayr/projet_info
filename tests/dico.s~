@@ -1,5 +1,5 @@
 29
-ADD	R	3 R
+ADD R 3 R
 ADDI I 3 I
 SUB R 3 R
 MULT R 2 R

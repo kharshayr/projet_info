@@ -3,7 +3,6 @@
 .text
     Lw $t0 , lunchtime
     LW $6, -0x200($7)
-    ADD $t1,$t2,$t3
     ADDI $t1,$zero,8
 boucle:
     BEQ $t0 , $t1 , byebye
