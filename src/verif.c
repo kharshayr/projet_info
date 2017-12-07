@@ -168,7 +168,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 									nb_op=nb_op-1;
 									break;}
 							p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
-						if(current_inst->lex.typ!=ERREUR){
+						if(nb_op==0){
 							instr=calloc(1,sizeof(instruction));
 							instr->inst=current_inst;
 							instr->inst_def=dico[index_dico];
@@ -191,7 +191,9 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 										break;}
 								i++;
 								q=q->suiv;if(!liste_vide(q)){temp=q->val;}}
-							list_instr=ajout_queue(instr,list_instr);}}
+							list_instr=ajout_queue(instr,list_instr);}
+						else{
+							current_inst->lex.typ=ERREUR;}}
 					else if (type=='I'){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
@@ -230,7 +232,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 									nb_op=nb_op-1;
 									break;}
 							p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
-						if(current_inst->lex.typ!=ERREUR){
+						if(nb_op==0){
 							instr=calloc(1,sizeof(instruction));
 							instr->inst=current_inst;
 							instr->inst_def=dico[index_dico];
@@ -258,7 +260,9 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 										break;}
 								i++;
 								q=q->suiv;if(!liste_vide(q)){temp=q->val;}}
-							list_instr=ajout_queue(instr,list_instr);}}
+							list_instr=ajout_queue(instr,list_instr);}
+						else{
+							current_inst->lex.typ=ERREUR;}}
 					else if (type=='J'){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 							switch (temp->lex.typ){
@@ -291,7 +295,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 									nb_op=nb_op-1;
 									break;}
 							p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
-						if(current_inst->lex.typ!=ERREUR){
+						if(nb_op==0){
 							instr=calloc(1,sizeof(instruction));
 							instr->inst=current_inst;
 							instr->inst_def=dico[index_dico];
@@ -319,7 +323,9 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 										break;}
 								i++;
 								q=q->suiv;if(!liste_vide(q)){temp=q->val;}}
-							list_instr=ajout_queue(instr,list_instr);}}}
+							list_instr=ajout_queue(instr,list_instr);}
+						else{
+							current_inst->lex.typ=ERREUR;}}}
 				else{
 					current_inst->lex.typ=ERREUR;
 					while (current_nl-temp->lex.nl==0 && !liste_vide(p)){

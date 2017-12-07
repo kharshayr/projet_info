@@ -3,12 +3,12 @@
 .text
    ADD $t1,$t2, $t1
     ROTR $t1, $t2, 1
-    MOVE $t2
+    MOVE $t2 , 2
     addi $t1, $t2, 3
 byebye:
-    JAL 1
- NOP
-  J 2
+  NOP
+    JAL boucle
+  J lunchtime
 .data
 lunchtime : .word 12,boucle,12
 .asciiz "blabla "
