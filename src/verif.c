@@ -220,7 +220,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 								case VIRGULE:
 									break;
 								case DECIMAL:
-									if (nb_op==1 && strcmp(arg,"I")==0){;}
+									if (nb_op==1 && (strcmp(arg,"I")==0 || strcmp(arg,"REL")==0)){;}
 									else if (nb_op>1){
 										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
 										current_inst->lex.typ=ERREUR;
@@ -232,7 +232,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){
 									nb_op=nb_op-1;
 									break;
 								case SYMBOLE:
-									if (nb_op==1 && strcmp(arg,"I")==0){;}
+									if (nb_op==1 && (strcmp(arg,"I")==0 || strcmp(arg,"REL")==0)){;}
 									else if (nb_op>1){
 										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);printf("%s \n",temp->lex.tok);
 										current_inst->lex.typ=ERREUR;

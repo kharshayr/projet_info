@@ -144,7 +144,7 @@ void lex_fsm(lexeme* lex) {
 }
 
 Liste lex_read_line( char *line, int nline, Liste lp) {
-    char *seps = " ";
+    char *seps = "  \t";
     char *token = NULL;
     char save[STRLEN];
 
