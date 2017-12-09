@@ -18,7 +18,7 @@ typedef struct reloc_s {
   reltyp rel_type;
 } reloc;
 
-reloc* init_entree_reloc(instruction*, symb*, int);
-reloc* creer_table_reloc(Liste, symb*);
+reloc* init_entree_reloc_text(instruction*, int, symb*) {
+reloc* creer_table_reloc_text(Liste, symb*) {
 
 #endif

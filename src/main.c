@@ -101,7 +101,7 @@ int main ( int argc, char *argv[] ) {
     visualiser_liste(*bss_l,&affiche_col);
 
     /* Chargement du dictionnaire*/
-    int nb_inst = 29;
+    int nb_inst = 25;
     inst_def_t * tab;
     tab=lect_dico_int("tests/dico.s", &nb_inst);
     int i;
@@ -124,17 +124,16 @@ int main ( int argc, char *argv[] ) {
 	else if(inst->Operande->ope_typ==ETI){
 		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->eti,inst->inst->lex.tok,inst->inst->lex.nl);}
 	p=p->suiv;}
+
+    
+
     free(tab);
     free(data_l);
     free(text_l);
     free(bss_l);
     free(s);
 
-    /* A faire : Verification des opérandes des instructions */
 
-    /* ---------------- Free memory and terminate -------------------*/
-
-    /* TODO free everything properly*/
 
     exit( EXIT_SUCCESS );
 }

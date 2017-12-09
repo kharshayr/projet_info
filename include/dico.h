@@ -9,19 +9,9 @@ typedef struct {
   char type ;
   int nb_op ;
   char* arg ;
+  unsigned long codeBinaire;
+  int* poidsBits;
 } inst_def_t;
-
-typedef struct {
-  int opcode:6, rs:5, rt:5, rd:5, sa:5, function:6;
-} cdbR;
-
-typedef struct {
-  int opcode:6, rs:5, rt:5, imd:16;
-} cdbI;
-
-typedef struct {
-  int opcode:6, target:26;
-} cdbJ;
 
 void strtoupper(char*);
 void affiche_erreurs_dico(Liste l);
