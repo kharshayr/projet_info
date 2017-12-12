@@ -39,7 +39,7 @@ void affiche_liste_ope_text(Liste);
 char* rech_mot(char*, char**);
 symb* rech_mot_symb(char*,symb*);
 Liste verif_arg_data(Liste*);
-Liste verif_arg_text(Liste*, inst_def_t *, int);
+Liste verif_arg_text(Liste*, inst_def_t *, int,symb*);
 int recherche_instr(char*, inst_def_t *, int);
 
 #endif

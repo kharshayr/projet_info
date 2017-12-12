@@ -110,12 +110,15 @@ int main ( int argc, char *argv[] ) {
    	 printf("%s %c %d %s\n", tab[i].symbole, tab[i].type, tab[i].nb_op,tab[i].arg);}*/
 
     /* Examen argument instruction data */
-    Liste arg_text=verif_arg_text(text_l,tab,nb_inst);
+    Liste arg_text=verif_arg_text(text_l,tab,nb_inst,s);
     affiche_erreurs_dico(*text_l);
     Liste arg_data=verif_arg_data(data_l);
 
     affiche_liste_ope_text(arg_text);
     /*affiche_liste_ope_data(arg_data);*/
+
+    printf("\n-------------------------Collection Symboles-----------------------------\n\n");
+    affiche_tab(s);
 
     free(tab);
     free(data_l);
