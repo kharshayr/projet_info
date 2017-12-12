@@ -232,6 +232,43 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 										temp->lex.typ=ERREUR;}
 									nb_op=nb_op-1;
 									break;
+								case OFFSETBASE:
+									if (nb_op==2 && strcmp(arg,"OFB")==0){
+										Liste q=p->suiv,r=calloc(1,sizeof(Liste));
+										p->suiv=r;
+										r->suiv=q;
+										int i=0,j=0;
+										while (temp->lex.tok[i]!='('){
+											i++;}
+										j=i;
+										while (temp->lex.tok[j]!=')'){
+											j++;}
+										temp->lex.tok[j]='\0';
+										mnemo=rech_mot(temp->lex.tok+i+1,reg_mnemo);
+										if(mnemo!=NULL){
+											symb* tempo=calloc(1,sizeof(symb));
+											tempo->lex.tok=mnemo;
+											tempo->lex.typ=REGISTRE;
+											p->suiv->val=tempo;
+											nb_op=nb_op-1;}
+										else{
+											printf("Nom de registre inconnu pour %s \n",((symb*)p->suiv->val)->lex.tok);
+											temp->lex.typ=ERREUR;
+											current_inst->lex.typ=ERREUR;}
+										temp->lex.tok[i]='\0';
+										to_decimal(temp->lex.tok);
+										temp->lex.typ=DECIMAL;
+										p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
+									else if (nb_op>1){
+										printf("Offset base pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
+										current_inst->lex.typ=ERREUR;
+										temp->lex.typ=ERREUR;}
+									else{
+										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
+										current_inst->lex.typ=ERREUR;
+										temp->lex.typ=ERREUR;}
+									nb_op=nb_op-1;
+									break;
 								case SYMBOLE:
 									if (rech_mot_symb(temp->lex.tok,tab)==NULL){
 										temp->section=undefined;

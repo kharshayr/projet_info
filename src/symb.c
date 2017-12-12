@@ -4,12 +4,12 @@
 
 void pseudo_instr(Liste p, int nl){
 	lexeme* temp=p->val;
-	Liste r=p->suiv;
 	strtoupper(temp->tok);
 	if (strcmp(temp->tok,"NOP")==0){
-		temp->tok=strdup("SLL");
+		Liste p_memo=p->suiv; /* On mémorise le pointeur sur la sssuite de la chaine */
+		temp->tok=strdup("SLL"); /* On remplace NOP par SLL */
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl;
+		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $0 */
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
@@ -23,9 +23,10 @@ void pseudo_instr(Liste p, int nl){
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
-		p->suiv=r;
+		p->suiv=p_memo; /* On referme la chaine */
 		return;}
-	else if (strcmp(temp->tok,"MOVE")==0){
+	else if (strcmp(temp->tok,"MOVE")==0){ /* Regarder comment LI fonctionne */
+		Liste p_memo;
 		temp->tok=strdup("ADD");
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			p=p->suiv;}
@@ -37,7 +38,7 @@ void pseudo_instr(Liste p, int nl){
 			return;}
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			p=p->suiv;
-			r=p->suiv;}
+			p_memo=p->suiv;}
 		else{
 			return;}
 		temp=calloc(1,sizeof(lexeme));
@@ -45,9 +46,10 @@ void pseudo_instr(Liste p, int nl){
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
-		p->suiv=r;
+		p->suiv=p_memo;
 		return;}
-	else if (strcmp(temp->tok,"NEG")==0){
+	else if (strcmp(temp->tok,"NEG")==0){ /* Regarder comment LI fonctionne */
+		Liste p_memo;
 		temp->tok=strdup("SUB");
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			p=p->suiv;}
@@ -58,7 +60,7 @@ void pseudo_instr(Liste p, int nl){
 		else{
 			return;}
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
-			r=p->suiv;}
+			p_memo=p->suiv;}
 		else{
 			return;}
 		temp=calloc(1,sizeof(lexeme));
@@ -66,11 +68,12 @@ void pseudo_instr(Liste p, int nl){
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
-		p->suiv=r;
+		p->suiv=p_memo;
 		return;}
 	else if (strcmp(temp->tok,"LI")==0){
-		temp->tok=strdup("ADDI");
-		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
+		Liste p_memo;
+		temp->tok=strdup("ADDI"); /* On remplace le token LI par ADDI */
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){ /* On verifie la validité des arguments */
 			p=p->suiv;}
 		else{
 			return;}
@@ -79,27 +82,27 @@ void pseudo_instr(Liste p, int nl){
 		else{
 			return;}
 		if ((((lexeme*)(p->suiv->val))->typ==DECIMAL || ((lexeme*)(p->suiv->val))->typ==HEXA) && !liste_vide(p->suiv)){
-			r=p->suiv;}
+			p_memo=p->suiv;} /* On memorise le pointeur sur l'immediate */
 		else{
 			return;}
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
+		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $zero */
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
-		p->suiv=r;
+		p->suiv=p_memo;
 		return;}
 	else if (strcmp(temp->tok,"BLT")==0){
-		Liste q;
-		temp->tok=strdup("SLT");
-		r=p->suiv;
+		Liste p_memo=p->suiv; /* On mémorise le token tu premier registre */
+		Liste p_ini; /* Token a partir duquel il faudra incrementer le numéro de ligne */
+		temp->tok=strdup("SLT"); /* On remplace le token BLT par SLT */
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl;
+		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl; /* On créé le lexeme suivant */
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
-		p->suiv=r;
-		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
+		p->suiv=p_memo; /* On repointe vers le premier registre */
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){ /* If évaluant la validité des types des arguments donnés */
 			p=p->suiv;}
 		else{
 			return;}
@@ -108,7 +111,7 @@ void pseudo_instr(Liste p, int nl){
 		else{
 			return;}
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
-			p=p->suiv;}
+			p=p->suiv;} /* On pointe sur rs maintenant */
 		else{
 			return;}
 		if (((lexeme*)(p->suiv->val))->typ==VIRGULE && !liste_vide(p->suiv)){
@@ -116,14 +119,14 @@ void pseudo_instr(Liste p, int nl){
 		else{
 			return;}
 		if ((((lexeme*)(p->suiv->val))->typ==DECIMAL || ((lexeme*)(p->suiv->val))->typ==HEXA || ((lexeme*)(p->suiv->val))->typ==SYMBOLE) && !liste_vide(p->suiv)){
-			r=p->suiv;}
+			p_memo=p->suiv;}          /* On mémorise l'adresse de la target */
 		else{
 			return;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("BNE");temp->typ=SYMBOLE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
-		q=p;
+		p_ini=p;  /* On incremente a partir de BNE */
 		p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl;
@@ -135,11 +138,49 @@ void pseudo_instr(Liste p, int nl){
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
-		p->suiv=r;
-		while (!liste_vide(q)){
-			((lexeme*)q->val)->nl+=1;
-			q=q->suiv;}
+		p->suiv=p_memo; /* On referme la chaine */
+		while (!liste_vide(p_ini)){           /* On increment les numero de lignes */
+			((lexeme*)p_ini->val)->nl+=1;
+			p_ini=p_ini->suiv;}
 		return;}
+	else if (strcmp(temp->tok,"LW")==0){
+		if(!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv) && !liste_vide(p->suiv->suiv->suiv)){
+		if (((lexeme*)p->suiv->val)->typ==REGISTRE && ((lexeme*)p->suiv->suiv->suiv->val)->typ==SYMBOLE){
+		Liste p_next=p->suiv->suiv->suiv->suiv,p_reg=p->suiv,p_eti=p->suiv->suiv->suiv,p_ini;
+		temp->tok=strdup("LUI"); /* On remplace le token LW par LUI*/
+		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
+		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv; /*On ajoute le maillon a la chaine */
+		p->val=temp;
+		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
+		p=p->suiv;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("LW");temp->typ=SYMBOLE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p_ini=p; /* Elements a partir duquel on incrementera les numeros de lignes */
+		p->suiv=p_reg; /* Prochain lexeme sera le registre */
+		p=p->suiv;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=calloc(1,sizeof(char*));
+		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
+		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
+		temp->typ=OFFSETBASE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=p_next; /* On referme la chaine */
+		while (!liste_vide(p_ini)){  /* On incremente les numéro de lignes car on a rajouté une ligne d'instruction */
+			((lexeme*)p_ini->val)->nl+=1;
+			p_ini=p_ini->suiv;}
+		return;}}}
 	return;
 	}
 
@@ -201,26 +242,25 @@ Liste* init_liste(){
 		return l;
 }
 
-void to_decimal(lexeme* hexa){
+void to_decimal(char* hexa){
 	int deca=0;
-	int i,n=strlen(hexa->tok);
+	int i,n=strlen(hexa);
 	int q=1;
-	if (*(hexa->tok)=='0'){
+	if (*(hexa)=='0'){
 		for (i=0;i<n-2;i++){
-			if ((hexa->tok)[n-1-i]<57){
-				deca+=(*((hexa->tok)+n-i-1)-48)*q;}
+			if ((hexa)[n-1-i]<57){
+				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
-				deca+=(*((hexa->tok)+n-i-1)-87)*q;}
+				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
 	else{
 		for (i=0;i<n-2;i++){
-			if ((hexa->tok)[n-1-i]<57){
-				deca+=(*((hexa->tok)+n-i-1)-48)*q;}
+			if ((hexa)[n-1-i]<57){
+				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
-				deca+=(*((hexa->tok)+n-i-1)-87)*q;}
+				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
-	sprintf(hexa->tok,"%d",deca);
-	hexa->typ=DECIMAL;}
+	sprintf(hexa,"%d",deca);}
 
 void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 	int* d=calloc(3,sizeof(int));/* Stockage et initialisation des decalages [bss,data,text] */
@@ -235,15 +275,15 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 		case INI:
 			switch (temp->typ){
 				case DIRECTIVE:
-					if (strcmp(temp->tok,".bss")==0){t->section=bss;}
+					if (strcmp(temp->tok,".bss")==0){t->section=bss;} /* On scanne le token de section et on l'affecte dans le symbole */
 					else if (strcmp(temp->tok,".data")==0){t->section=data;}
 					else if (strcmp(temp->tok,".text")==0){t->section=text;}
 					else{
 						temp->typ=ERREUR;
-						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}/* ERREUR, on peut pas mettre une autre directive de ces trois là */
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}} /* ERREUR, on peut pas mettre une autre directive que ces trois là */
 					break;
 				case COMMENT:
-					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* Si commentaire on passe a la suite */
 					break;
 				default:
 					temp->typ=ERREUR;
@@ -255,11 +295,11 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 				case DIRECTIVE:
 					if (strcmp((temp->tok),".bss")==0){
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}} /* On change pas de section */
-					else if (strcmp(temp->tok,".data")==0){init_symb(t);}
+					else if (strcmp(temp->tok,".data")==0){init_symb(t);} /* On repasse a l'état INIT */
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".space")==0 && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
-							ajout_liste(bss_l,p,t->section,d);
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){ /* On vérifie qu'il y est bien au moins un argument */
+							ajout_liste(bss_l,p,t->section,d); /* On ajoute le .space à la collection */
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while ((current_l-temp->nl && !liste_vide(p))==0){
 								switch(temp->typ){
@@ -268,7 +308,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 										d[bss]=d[bss]+atoi(temp->tok);
 										break;
 									case HEXA:
-										to_decimal(temp);
+										to_decimal(temp->tok); /* On convertit l'HEXA en DECIMAL */
+										temp->typ=DECIMAL;
 										ajout_liste(bss_l,p,t->section,d);
 										d[bss]=d[bss]+atoi(temp->tok);
 									case VIRGULE:
@@ -278,21 +319,21 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 										break;}
 								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 						else{
-							temp->typ=ERREUR;
+							temp->typ=ERREUR; /* Si on a pas d'argument, ERREUR */
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else{
 						temp->typ=ERREUR;
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}/* ERREUR, pas d'autres directives acceptées dans .bss */
 					break;
 				case COMMENT:
-					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* On ignore les commentaires */
 					break;
 				case SYMBOLE:
-					if (!liste_vide(p->suiv)){
+					if (!liste_vide(p->suiv)){ /*Si jamais on définit une étiquette dans bss */
 						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){
 							t->lex=*temp;
 							t->deca=d[bss];
-							ajout_tab(s,t);
+							ajout_tab(s,t); /* On l ajoute a la table des symboles */
 							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
 							temp->typ=ERREUR;
@@ -317,7 +358,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 						while (current_l-temp->nl==0  && !liste_vide(p)){
 							switch (temp->typ){
 								case HEXA:
-									to_decimal(temp);
+									to_decimal(temp->tok);
+									temp->typ=DECIMAL;
 									if (d[data]%4!=0){
 										d[data]=4+d[data]-d[data]%4;}
 									ajout_liste(data_l,p,t->section,d);
@@ -356,7 +398,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 										d[data]=d[data]+1;
 										break;
 									case HEXA:
-										to_decimal(temp);
+										to_decimal(temp->tok);
+										temp->typ=DECIMAL;
 										ajout_liste(data_l,p,t->section,d);
 										d[data]=d[data]+1;
 										break;
@@ -395,7 +438,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							while (current_l-temp->nl==0  && !liste_vide(p)){
 								switch(temp->typ){
 									case HEXA:
-										to_decimal(temp);
+										to_decimal(temp->tok);
+										temp->typ=DECIMAL;
 										ajout_liste(bss_l,p,t->section,d);
 										d[bss]=d[bss]+atoi(temp->tok);
 										break;
@@ -406,7 +450,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									case VIRGULE:
 										break;
 									default:
-										temp->typ=ERREUR;/*ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										temp->typ=ERREUR;
 										break;}
 								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 						else{
@@ -414,14 +458,14 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else{
 						temp->typ=ERREUR;
-						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}/*ERREUR, directive dans mauvaise section */
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 					break;
 				case COMMENT:
 					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 					break;
 				case SYMBOLE:
 					if (!liste_vide(p->suiv)){
-						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){
+						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){ /* Etiquette définie dans .data */
 							t->lex=*temp;
 							t->deca=d[data];
 							ajout_tab(s,t);
@@ -461,7 +505,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							pseudo_instr(p,temp->nl);
 							while (current_l-temp->nl==0 && !liste_vide(p)){
 								if (temp->typ==HEXA){
-									to_decimal(temp);}
+									to_decimal(temp->tok);
+									temp->typ=DECIMAL;}
 								switch (temp->typ){
 									case VIRGULE:
 										break;
