@@ -1,15 +1,25 @@
+# TEST_RETURN_CODE=PASS
 # allons au ru
+
+
 .set noreorder
 .text
-	ADD $t1,$t2, $t1
-	ROTR $t1, $t2, 1
-    NEG $t2 , $t2
-    ADDI $t1, $t2, 3
-byebye :
-	BLT $t1 , $t2, boucle
-	NOP
-	JAL boucle
-  J lunchtime
+    Lw $t0 , lunchtime
+    LW $6, -0x200($7)
+    ADDI $t1,$zero,8
+
+boucle:
+    BEQ $t0 , $t1 , byebye
+    NOP
+    addi $t1 , $t1 , 1
+    J boucle 
+    NOP
+byebye:
+    JAL viteviteauru
+
 .data
-lunchtime : .word 12,boucle,12
-.asciiz "blabla "
+lunchtime: .word 12
+.word menu
+
+.bss 
+menu:.space 24

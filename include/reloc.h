@@ -11,7 +11,7 @@ typedef enum reltyp_e {
 
 typedef struct reloc_s {
   int rel_addresse;
-  char* etiquette;
+  symb* etiquette;
   reltyp rel_type;
 } reloc;
 

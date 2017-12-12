@@ -10,21 +10,21 @@
 #include <dico.h>
 
 void affiche_reloc(void* e) {
-    static char* mesval[] = {"R_MIPS_32", "R_MIPS_26", "R_MIPS_LO16", "R_MIPS_HI16", "UNDEFINED"};
-    printf("%s\t%s\n",mesval[((reloc*)e)->rel_type],((reloc*)e)->etiquette);
+    static char* mesval[] = {"R_MIPS_32", "R_MIPS_26", "R_MIPS_LO16", "R_MIPS_HI16"};
+    static char* mesval2[] = {".bss", ".data", ".text", " ", " "};
+    if(((reloc*)e)->etiquette->section == undefined) {
+      printf("%08x\t%s\t[UNDEFINED]\t%s\n",((reloc*)e)->rel_addresse,mesval[((reloc*)e)->rel_type],((reloc*)e)->etiquette->lex.tok);
+    }
+    else {
+      printf("%08x\t%s\t%s:%08x\t%s\n",((reloc*)e)->rel_addresse,mesval[((reloc*)e)->rel_type],mesval2[((reloc*)e)->etiquette->section],((reloc*)e)->etiquette->deca,((reloc*)e)->etiquette->lex.tok);
+    }
 }
 
 reloc* init_entree_reloc(instruction* i, int num_op, symb* symb_t) {
     reloc* r = calloc(1,sizeof(reloc));
     if(r==NULL) { printf("Erreur allocation entrée de relocation"); return NULL; }
-    r->etiquette = strdup(i->Operande[num_op].ope_val->eti);
 
-    symb* etiq_p = rech_mot_symb(i->Operande[num_op].ope_val->eti,symb_t);
-    if (etiq_p == NULL) {
-      r->rel_type = UNDEFINED;
-      r->rel_addresse = 0;
-      return r;
-    }
+    r->etiquette = rech_mot_symb(i->Operande[num_op].ope_val->eti,symb_t);
 
     int d = i->inst->deca;
     char* typOp = i->inst_def.arg;
@@ -35,7 +35,7 @@ reloc* init_entree_reloc(instruction* i, int num_op, symb* symb_t) {
     }
 
     else if(!strcmp(typOp,"REL")) {
-        i->Operande[num_op].ope_val->rel= (d+4 - etiq_p->deca)>>2;
+        i->Operande[num_op].ope_val->rel= (d+4 - (r->etiquette->deca))>>2;
         i->Operande[num_op].ope_typ=REL;
         return NULL;
     }
