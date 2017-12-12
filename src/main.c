@@ -117,7 +117,6 @@ int main ( int argc, char *argv[] ) {
 
     affiche_liste_ope_text(arg_text);
     /*affiche_liste_ope_data(arg_data);*/
-
     Liste reloc_t_text = creer_table_reloc(arg_text,s);
     visualiser_liste(reloc_t_text,&affiche_reloc);
     Liste reloc_t_data = creer_table_reloc(arg_data,s);
