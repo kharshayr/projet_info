@@ -12,7 +12,7 @@
 
 
 typedef enum sec{
-	bss, data, text, INI,} sect;
+	bss, data, text, INI, UNDEFINED} sect;
 
 typedef struct sym{
 	lexeme lex;                             /* Lexeme observé */
@@ -28,6 +28,6 @@ void ajout_tab(symb*, symb*);
 void init_symb(symb*);
 Liste* init_liste();
 void tabl_symb(Liste, symb*, Liste*, Liste*, Liste*);
-int pseudo_instr(Liste, int);
+void pseudo_instr(Liste, int);
 
 #endif

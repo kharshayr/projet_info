@@ -2,7 +2,7 @@
 
 #include<symb.h>
 
-int pseudo_instr(Liste p, int nl){
+void pseudo_instr(Liste p, int nl){
 	lexeme* temp=p->val;
 	Liste r=p->suiv;
 	strtoupper(temp->tok);
@@ -24,84 +24,135 @@ int pseudo_instr(Liste p, int nl){
 		p=p->suiv;
 		p->val=temp;
 		p->suiv=r;
-		return 0;}
+		return;}
 	else if (strcmp(temp->tok,"MOVE")==0){
 		temp->tok=strdup("ADD");
-		if (((lexeme*)(p->suiv->val))->typ==REGISTRE){
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			p=p->suiv;}
 		else{
-			return 0;}
-		if (((lexeme*)(p->suiv->val))->typ==VIRGULE){
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==VIRGULE && !liste_vide(p->suiv)){
 			p=p->suiv;}
 		else{
-			return 0;}
-		if (((lexeme*)(p->suiv->val))->typ==REGISTRE){
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			p=p->suiv;
 			r=p->suiv;}
 		else{
-			return 0;}
+			return;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
 		p->suiv=r;
-		return 0;}
+		return;}
 	else if (strcmp(temp->tok,"NEG")==0){
 		temp->tok=strdup("SUB");
-		if (((lexeme*)(p->suiv->val))->typ==REGISTRE){
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			p=p->suiv;}
 		else{
-			return 0;}
-		if (((lexeme*)(p->suiv->val))->typ==VIRGULE){
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==VIRGULE && !liste_vide(p->suiv)){
 			p=p->suiv;}
 		else{
-			return 0;}
-		if (((lexeme*)(p->suiv->val))->typ==REGISTRE){
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			r=p->suiv;}
 		else{
-			return 0;}
+			return;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
 		p->suiv=r;
-		return 0;}
+		return;}
 	else if (strcmp(temp->tok,"LI")==0){
 		temp->tok=strdup("ADDI");
-		if (((lexeme*)(p->suiv->val))->typ==REGISTRE){
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
 			p=p->suiv;}
 		else{
-			return 0;}
-		if (((lexeme*)(p->suiv->val))->typ==VIRGULE){
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==VIRGULE && !liste_vide(p->suiv)){
 			p=p->suiv;}
 		else{
-			return 0;}
-		if (((lexeme*)(p->suiv->val))->typ==DECIMAL || ((lexeme*)(p->suiv->val))->typ==HEXA){
+			return;}
+		if ((((lexeme*)(p->suiv->val))->typ==DECIMAL || ((lexeme*)(p->suiv->val))->typ==HEXA) && !liste_vide(p->suiv)){
 			r=p->suiv;}
 		else{
-			return 0;}
+			return;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;
 		p->val=temp;
 		p->suiv=r;
-		return 0;}
-	return 0;
+		return;}
+	else if (strcmp(temp->tok,"BLT")==0){
+		Liste q;
+		temp->tok=strdup("SLT");
+		r=p->suiv;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=r;
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
+			p=p->suiv;}
+		else{
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==VIRGULE && !liste_vide(p->suiv)){
+			p=p->suiv;}
+		else{
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){
+			p=p->suiv;}
+		else{
+			return;}
+		if (((lexeme*)(p->suiv->val))->typ==VIRGULE && !liste_vide(p->suiv)){
+			p=p->suiv;}
+		else{
+			return;}
+		if ((((lexeme*)(p->suiv->val))->typ==DECIMAL || ((lexeme*)(p->suiv->val))->typ==HEXA || ((lexeme*)(p->suiv->val))->typ==SYMBOLE) && !liste_vide(p->suiv)){
+			r=p->suiv;}
+		else{
+			return;}
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("BNE");temp->typ=SYMBOLE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		q=p;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=r;
+		while (!liste_vide(q)){
+			((lexeme*)q->val)->nl+=1;
+			q=q->suiv;}
+		return;}
+	return;
 	}
 
 void affiche_tab(symb* s){ /* Affiche uniquement les etiquettes stockées */
 	symb* t=s;
-	char* secti[]= {"bss", "data", "text", "INI"};
+	char* secti[]= {"bss", "data", "text", "INI" ,"UNDEFINED"};
 	while(t!=s+N){
 	if(t->lex.tok!=0){
 		printf("On a stocké l'étiquette %s de decalage %d dans la section %s \n",t->lex.tok,t->deca,secti[t->section]);}
 		t++;}}
 
 void affiche_col(void* e){ /* Affiche les listes d'instruction constitutées */
-	char* secti[]= {"bss", "data", "text", "INI"};
+	char* secti[]= {"bss", "data", "text", "INI","UNDEFINED"};
 	if(((symb*)e)->lex.typ==DIRECTIVE || ((symb*)e)->lex.typ==SYMBOLE){
 		printf("Instruction : %s\t\t Decalage : %d\t\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
 	}
@@ -129,6 +180,7 @@ int hachage(char* mot){ /* Fonction de hachage */
 	int i=0;
 	int h=0;
 	int a=1;
+	if (mot==NULL){return NULL;}
 	while (mot[i]!='\0') {
 		h+=((int)mot[i]-'a')*a;
 		a*=31;
@@ -178,9 +230,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 	symb* t=calloc(1,sizeof(symb));
 	init_symb(t);
 	int current_l; /* Valeur stockée de la ligne actuellement examinée */
-	int c=0;
 	while (!liste_vide(p)){
-		temp->nl+=c;
 		current_l=temp->nl;
 		switch (t->section){
 		case INI:
@@ -409,7 +459,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							ajout_tab(s,t);
 							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
-							c+=pseudo_instr(p,temp->nl);
+							pseudo_instr(p,temp->nl);
 							while (current_l-temp->nl==0 && !liste_vide(p)){
 								if (temp->typ==HEXA){
 									to_decimal(temp);}
