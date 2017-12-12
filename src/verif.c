@@ -256,8 +256,10 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 											temp->lex.typ=ERREUR;
 											current_inst->lex.typ=ERREUR;}
 										temp->lex.tok[i]='\0';
-										to_decimal(temp->lex.tok);
-										temp->lex.typ=DECIMAL;
+										if (to_decimal(temp->lex.tok)==0){
+											temp->lex.typ=DECIMAL;}
+										else{
+											temp->lex.typ=SYMBOLE;}
 										p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
 									else if (nb_op>1){
 										printf("Offset base pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);

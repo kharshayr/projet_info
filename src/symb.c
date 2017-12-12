@@ -242,10 +242,11 @@ Liste* init_liste(){
 		return l;
 }
 
-void to_decimal(char* hexa){
+int to_decimal(char* hexa){
 	int deca=0;
 	int i,n=strlen(hexa);
 	int q=1;
+	char signe=*hexa;
 	if (*(hexa)=='0'){
 		for (i=0;i<n-2;i++){
 			if ((hexa)[n-1-i]<57){
@@ -253,14 +254,22 @@ void to_decimal(char* hexa){
 			else{
 				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
-	else{
-		for (i=0;i<n-2;i++){
+	else if (*(hexa)=='+' || *(hexa)=='-'){
+		for (i=0;i<n-3;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
 				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
-	sprintf(hexa,"%d",deca);}
+	else {
+		return 1;}
+	if (signe=='-'){
+		sprintf(hexa,"%d",deca);
+		strcpy(hexa+1,hexa);
+		*hexa=signe;}
+	else{
+		sprintf(hexa,"%d",deca);}
+	return 0;}
 
 void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 	int* d=calloc(3,sizeof(int));/* Stockage et initialisation des decalages [bss,data,text] */

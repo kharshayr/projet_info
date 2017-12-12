@@ -29,6 +29,6 @@ void init_symb(symb*);
 Liste* init_liste();
 void tabl_symb(Liste, symb*, Liste*, Liste*, Liste*);
 void pseudo_instr(Liste, int);
-void to_decimal(char*);
+int to_decimal(char*);
 
 #endif
