@@ -20,7 +20,7 @@
 #include <liste.h>
 
 void affiche(void* e) {
-    static char* mesval[] = {"COMMENT", "NL", "SYMBOLE", "DEUX_PTS", "VIRGULE", "PARENTHESE", "DIRECTIVE", "REGISTRE", "DECIMAL", "HEXA\t", "ZERO", "CHAINE\t", "INIT", "ERREUR"};
+    static char* mesval[] = {"COMMENT", "NL", "SYMBOLE", "DEUX_PTS", "VIRGULE", "DEB_OFFSETBASE", "OFFSETBASE", "DIRECTIVE", "REGISTRE", "DECIMAL", "HEXA\t", "ZERO", "CHAINE\t", "INIT", "ERREUR"};
     printf("[%s\t]\t%s\t\t\t Ligne : %i\n",mesval[((lexeme*)e)->typ],((lexeme*)e)->tok, ((lexeme*)e)->nl);
 }
 
@@ -76,10 +76,8 @@ void lex_fsm(lexeme* lex) {
                     return;
                     break;
                 case '(':
-                    lex->typ = PARENTHESE;
+                    lex->typ = DEB_OFFSETBASE;
                     break;
-                case ')':
-                    lex->typ = PARENTHESE;
                 }
             }
             else if (isalpha(c[i])) {
@@ -104,6 +102,7 @@ void lex_fsm(lexeme* lex) {
 
         case DECIMAL:
             if(isdigit(c[i])) lex->typ = DECIMAL;
+            else if(c[i]=='(') lex->typ = DEB_OFFSETBASE;
             else {
                 lex->typ = ERREUR;
                 return;
@@ -112,6 +111,7 @@ void lex_fsm(lexeme* lex) {
 
         case HEXA:
             if(isxdigit(c[i])) lex->typ = HEXA;
+            else if(c[i]=='(') lex->typ = DEB_OFFSETBASE;
             else {
                 lex->typ = ERREUR;
                 return;
@@ -136,6 +136,22 @@ void lex_fsm(lexeme* lex) {
             }
             break;
 
+        case DEB_OFFSETBASE:
+            if(c[i]=='$' && isalnum(c[i+1])) {
+              lex->typ = OFFSETBASE;
+            }
+            else {
+              lex->typ = ERREUR;
+              return;
+            }
+            break;
+
+        case OFFSETBASE:
+            if(c[i+1]=='\0' && c[i] != ')') {
+              lex->typ = ERREUR;
+              return;
+            }
+
         default:
             break;
         }
@@ -144,7 +160,7 @@ void lex_fsm(lexeme* lex) {
 }
 
 Liste lex_read_line( char *line, int nline, Liste lp) {
-    char *seps = " ";
+    char *seps = " \t";
     char *token = NULL;
     char save[STRLEN];
 
@@ -208,14 +224,14 @@ void lex_standardise(char* in, char* out) {                      /* Fonction qui
     char* q=out;
     int l;
     while (p<in+strlen(in)) {                                /* Premier traitement : on rajoute des espaces autour de touts les caractères spécifiques*/
-        if (*p==':' || *p==',' || *p=='(' || *p==')') {                        /* Pour les caractères nécessitant un espace avant et après*/
+        if (*p==':' || *p==',') {                        /* Pour les caractères nécessitant un espace avant et après*/
             *q=' ';
             q++;
             *q=*p;
             q++;
             *q=' ';
         }
-        else if (*p=='#' || *p=='.' || *p=='$' || *p=='\n') { /* Pour les caratères nécessitant un espace avant seulement*/
+        else if (*p=='#' || *p=='.' || *p=='\n') { /* Pour les caratères nécessitant un espace avant seulement*/
             *q=' ';
             q++;
             *q=*p;

@@ -1,0 +1,15 @@
+#ifndef _BINAIRE_H_
+#define _BINAIRE_H_
+
+#include <stdio.h>
+#include <notify.h>
+
+typedef struct {
+  int num_ligne;
+  
+}
+
+Liste creer_liste_assemblage();
+
+
+#endif

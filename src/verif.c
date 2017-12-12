@@ -85,6 +85,7 @@ Liste verif_arg_data(Liste* data_l){
 							instr->Operande->ope_val=calloc(1,sizeof(char*));
 							(instr->Operande)->ope_typ=ETI;
 							(instr->Operande)->ope_val->eti=temp->lex.tok;
+              instr->inst_def.arg=strdup("WRD");
 							break;
 						case DECIMAL:
 							instr->Operande->ope_val=calloc(1,sizeof(unsigned long));
@@ -94,7 +95,7 @@ Liste verif_arg_data(Liste* data_l){
 						case CHAINE:
 							instr->Operande->ope_val=calloc(1,sizeof(char*));
 							(instr->Operande)->ope_typ=CHN;
-							(instr->Operande)->ope_val->chaine=temp->lex.tok;	
+							(instr->Operande)->ope_val->chaine=temp->lex.tok;
 						default:
 							break;}
 					p=p->suiv;if(!liste_vide(p)){temp=p->val;}
@@ -104,7 +105,7 @@ Liste verif_arg_data(Liste* data_l){
 				p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 				break;}}
 	return list_instr;}
-		
+
 
 
 Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille){

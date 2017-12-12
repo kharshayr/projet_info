@@ -28,7 +28,7 @@ inst_def_t * lect_dico_int(char* nomFichierDico, int* p_nb_inst) {
  char bs[32];
  inst_def_t * tab;
  f1=fopen(nomFichierDico,"r");
- 
+
  if (f1==NULL) {
    WARNING_MSG("Erreur ouverture fichier dictionnaire");
    return NULL;}
@@ -49,8 +49,6 @@ inst_def_t * lect_dico_int(char* nomFichierDico, int* p_nb_inst) {
      case 'R':
      fscanf(f1, "%s %s %s %s %s %s", &bs[0], &bs[6], &bs[11], &bs[16], &bs[21], &bs[26]);
      tab[i].codeBinaire=strtol(bs,NULL,2);
-     /*printf("codeBinaire little endian 0x%08x\n", codeBinaire);
-     printf("%08x\n", tab[i].unionPattern.patternR.function); */
      break;
      case 'I':
      fscanf(f1, "%s %s %s %s", &bs[0], &bs[6], &bs[11], &bs[16]);
@@ -61,7 +59,6 @@ inst_def_t * lect_dico_int(char* nomFichierDico, int* p_nb_inst) {
      tab[i].codeBinaire=strtol(bs,NULL,2);
      break;
    }
-   printf("codeBinaire little endian 0x%08x\n", tab[i].codeBinaire);
 
    int* tab_poids = calloc(tab[i].nb_op,sizeof(int));
    for(j=0;j<tab[i].nb_op;j++) {
