@@ -234,7 +234,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									break;
 								case SYMBOLE:
 									if (rech_mot_symb(temp->lex.tok,tab)==NULL){
-										temp->section=UNDEFINED;
+										temp->section=undefined;
 										temp->deca=0;
 										ajout_tab(tab,temp);}
 									if (nb_op==1 && (strcmp(arg,"I")==0 || strcmp(arg,"REL")==0)){;}
@@ -305,7 +305,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									break;
 								case SYMBOLE:
 									if (rech_mot_symb(temp->lex.tok,tab)==NULL){
-										temp->section=UNDEFINED;
+										temp->section=undefined;
 										temp->deca=0;
 										ajout_tab(tab,temp);}
 									if (nb_op==1){;}

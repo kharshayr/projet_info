@@ -145,14 +145,14 @@ void pseudo_instr(Liste p, int nl){
 
 void affiche_tab(symb* s){ /* Affiche uniquement les etiquettes stockées */
 	symb* t=s;
-	char* secti[]= {"bss", "data", "text", "INI" ,"UNDEFINED"};
+	char* secti[]= {"bss", "data", "text", "INI" ,"undefined"};
 	while(t!=s+N){
 	if(t->lex.tok!=0){
 		printf("On a stocké l'étiquette %s de decalage %d dans la section %s \n",t->lex.tok,t->deca,secti[t->section]);}
 		t++;}}
 
 void affiche_col(void* e){ /* Affiche les listes d'instruction constitutées */
-	char* secti[]= {"bss", "data", "text", "INI","UNDEFINED"};
+	char* secti[]= {"bss", "data", "text", "INI","undefined"};
 	if(((symb*)e)->lex.typ==DIRECTIVE || ((symb*)e)->lex.typ==SYMBOLE){
 		printf("Instruction : %s\t\t Decalage : %d\t\t Section : %s \n",((symb*)e)->lex.tok,((symb*)e)->deca,secti[((symb*)e)->section]);
 	}
@@ -180,7 +180,6 @@ int hachage(char* mot){ /* Fonction de hachage */
 	int i=0;
 	int h=0;
 	int a=1;
-	if (mot==NULL){return NULL;}
 	while (mot[i]!='\0') {
 		h+=((int)mot[i]-'a')*a;
 		a*=31;

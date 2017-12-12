@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
 
-#include<lex.h>
-#include<liste.h>
-#include<symb.h>
+#include <lex.h>
+#include <liste.h>
+#include <symb.h>
 #include <dico.h>
 
 void affiche_erreurs_dico(Liste l){

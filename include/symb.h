@@ -12,7 +12,7 @@
 
 
 typedef enum sec{
-	bss, data, text, INI, UNDEFINED} sect;
+	bss, data, text, INI, undefined} sect;
 
 typedef struct sym{
 	lexeme lex;                             /* Lexeme observé */

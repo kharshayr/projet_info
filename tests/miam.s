@@ -4,9 +4,9 @@
 	ADD $t1,$t2, $t1
 	ROTR $t1, $t2, 1
     NEG $t2 , $t2
-    addi $t1, $t2, 3
+    ADDI $t1, $t2, 3
 byebye :
-	BLT $t1 , $t2 boucle
+	BLT $t1 , $t2, boucle
 	NOP
 	JAL boucle
   J lunchtime
