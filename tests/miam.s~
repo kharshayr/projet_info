@@ -2,7 +2,7 @@
 .set noreorder
 .text
 ADD $t1,$t2, $t3
- LW $t4 , +0x200($t1)
+ LW $t4 , +200($t1)
     NEG $t2 , $t2
     ADDI $t1, $t2, 0x200
 byebye :

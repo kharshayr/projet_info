@@ -256,7 +256,8 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 											temp->lex.typ=ERREUR;
 											current_inst->lex.typ=ERREUR;}
 										temp->lex.tok[i]='\0';
-										if (to_decimal(temp->lex.tok)==0){
+										i=to_decimal(temp->lex.tok);
+										if (i<=1){
 											temp->lex.typ=DECIMAL;}
 										else{
 											temp->lex.typ=SYMBOLE;}

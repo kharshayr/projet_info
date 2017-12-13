@@ -2,6 +2,13 @@
 
 #include<symb.h>
 
+char * strdup(const char *str){
+    int n = strlen(str) + 1;
+    char *dup = malloc(n);
+    if(dup){
+        strcpy(dup, str);}
+    return dup;}
+
 void pseudo_instr(Liste p, int nl){
 	lexeme* temp=p->val;
 	strtoupper(temp->tok);
@@ -181,6 +188,44 @@ void pseudo_instr(Liste p, int nl){
 			((lexeme*)p_ini->val)->nl+=1;
 			p_ini=p_ini->suiv;}
 		return;}}}
+	else if (strcmp(temp->tok,"SW")==0){
+		if(!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv) && !liste_vide(p->suiv->suiv->suiv)){
+		if (((lexeme*)p->suiv->val)->typ==REGISTRE && ((lexeme*)p->suiv->suiv->suiv->val)->typ==SYMBOLE){
+		Liste p_next=p->suiv->suiv->suiv->suiv,p_reg=p->suiv,p_eti=p->suiv->suiv->suiv,p_ini;
+		temp->tok=strdup("LUI"); /* On remplace le token SW par LUI*/
+		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
+		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv; /*On ajoute le maillon a la chaine */
+		p->val=temp;
+		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
+		p=p->suiv;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("SW");temp->typ=SYMBOLE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p_ini=p; /* Elements a partir duquel on incrementera les numeros de lignes */
+		p->suiv=p_reg; /* Prochain lexeme sera le registre */
+		p=p->suiv;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=calloc(1,sizeof(char*));
+		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
+		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
+		temp->typ=OFFSETBASE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;
+		p->val=temp;
+		p->suiv=p_next; /* On referme la chaine */
+		while (!liste_vide(p_ini)){  /* On incremente les numéro de lignes car on a rajouté une ligne d'instruction */
+			((lexeme*)p_ini->val)->nl+=1;
+			p_ini=p_ini->suiv;}
+		return;}}}
 	return;
 	}
 
@@ -247,22 +292,26 @@ int to_decimal(char* hexa){
 	int i,n=strlen(hexa);
 	int q=1;
 	char signe=*hexa;
-	if (*(hexa)=='0'){
+	if (signe=='0'){
 		for (i=0;i<n-2;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
 				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
-	else if (*(hexa)=='+' || *(hexa)=='-'){
+	else if (signe=='+' || signe=='-'){
+		if (*(hexa+1) >='1' && *(hexa+1)<='9') {
+			return 1;}
 		for (i=0;i<n-3;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
 				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
-	else {
+	else if (signe >='1' && signe<='9') {
 		return 1;}
+	else{
+		return 2;}
 	if (signe=='-'){
 		sprintf(hexa,"%d",deca);
 		strcpy(hexa+1,hexa);
