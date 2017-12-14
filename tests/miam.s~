@@ -6,11 +6,11 @@ ADDI $t1,$t2, -3
     NEG $t2 , $t2
     ADDI $t1, $t2, 0x200
 byebye :
-	BLT $t1 , $t2, boucle
+	BLT $t1 , $t2 :, boucle
 	NOP
 	JAL boucle
 lunchtime:
- LW $t4 , $t1, toucle
+ LW $t4 , toucle
 .data
 .word 12,boucle,12
 .asciiz "bl       a::          bla "
