@@ -122,7 +122,7 @@ int main ( int argc, char *argv[] ) {
     printf("\nListe d'assemblage : \n\n");
     calcul_code_assemblage(arg_text, arg_data, *bss_l, origine_l, &nlines, s);
     visualiser_liste(*origine_l,&affiche_assembl);
-
+    
 
 
     /* On libère */

@@ -71,35 +71,39 @@ Liste verif_arg_data(Liste* data_l){
 	symb* temp=p->val;
 	symb* current_inst=temp;
 	instruction* instr;
+	int i;
 	while(!liste_vide(p)){
+		i=0;
+		instr=calloc(1,sizeof(instruction));
 		switch (temp->lex.typ){
 			case DIRECTIVE:
 				current_inst=temp;
 				p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 				while (temp->lex.typ!=DIRECTIVE && !liste_vide(p)){
-					instr=calloc(1,sizeof(instruction));
 					instr->Operande=calloc(1,sizeof(opestruct));
 					instr->inst=current_inst;
 					switch(temp->lex.typ){
 						case SYMBOLE:
-							instr->Operande->ope_val=calloc(1,sizeof(char*));
-							(instr->Operande)->ope_typ=ETI;
-							(instr->Operande)->ope_val->eti=temp->lex.tok;
-              instr->inst_def.arg=strdup("WRD");
+							instr->Operande[i].ope_val=calloc(1,sizeof(char*));
+							instr->Operande[i].ope_typ=ETI;
+							instr->Operande[i].ope_val->eti=temp->lex.tok;
+							instr->inst_def.arg=strdup("WRD");
 							break;
 						case DECIMAL:
-							instr->Operande->ope_val=calloc(1,sizeof(unsigned long));
-							(instr->Operande)->ope_typ=WRD;
-							(instr->Operande)->ope_val->wrd=(unsigned long)atoi(temp->lex.tok);
+							instr->Operande[i].ope_val=calloc(1,sizeof(unsigned long));
+							instr->Operande[i].ope_typ=WRD;
+							instr->Operande[i].ope_val->wrd=(unsigned long)atoi(temp->lex.tok);
 							break;
 						case CHAINE:
-							instr->Operande->ope_val=calloc(1,sizeof(char*));
-							(instr->Operande)->ope_typ=CHN;
-							(instr->Operande)->ope_val->chaine=temp->lex.tok;
+							instr->Operande[i].ope_val=calloc(1,sizeof(char*));
+							instr->Operande[i].ope_typ=CHN;
+							instr->Operande[i].ope_val->chaine=temp->lex.tok;
 						default:
 							break;}
 					p=p->suiv;if(!liste_vide(p)){temp=p->val;}
-					list_instr=ajout_queue(instr,list_instr);}
+					i++;}
+				instr->inst_def.nb_op=i;
+				list_instr=ajout_queue(instr,list_instr);
 				break;
 			default:
 				p=p->suiv;if (!liste_vide(p)){temp=p->val;}

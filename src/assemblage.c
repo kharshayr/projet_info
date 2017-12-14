@@ -10,11 +10,38 @@
 
 void affiche_assembl(void* e) {
   printf("%2i ", ((assembl*)e)->num_ligne);
-  if(((assembl*)e)->typ_aff==1){
+  if(((assembl*)e)->typ_aff==9){
     printf("\t\t     %s\n",((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 0){
     printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 10){
+    printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 1){
+    printf("%08X %1X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 2){
+    printf("%08X %2X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 3){
+    printf("%08X %3X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 4){
+    printf("%08X %4X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 5){
+    printf("%08X %5X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 6){
+    printf("%08X %6X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 7){
+    printf("%08X %7X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+  }
+  else if(((assembl*)e)->typ_aff == 8){
+    printf("%08X %8X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
 }
 
@@ -41,7 +68,7 @@ assembl* init_assembl(char* line, int line_num) {
   a->ligne = calloc(1,sizeof(char)*strlen(line));
   strcpy(a->ligne,line);
   a->num_ligne = line_num;
-  a->typ_aff = 1;
+  a->typ_aff = 9;
   return a;
 }
 
@@ -92,7 +119,7 @@ Liste chercher_ligne_ass(int num_ligne, Liste* ass){
 }
 
 void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste* assembl_l, unsigned int* n_lines, symb* symb_t) {
-  int i, j, num_op, pseudo;
+  int i, j, num_op, pseudo, compteur=0;
   Liste temp;
   Liste temp_ass;
   unsigned long code;
@@ -159,7 +186,7 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
     if(!liste_vide(temp)){
       temp_ass = chercher_ligne_ass(i,assembl_l);
 
-      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".word")) {
+      if(!strcmp(((instruction*)temp->val)->inst->lex.tok,".word")) {
         for(num_op=0;num_op<((instruction*)temp->val)->inst_def.nb_op;num_op++) {
           if(num_op==0) {
             if(((instruction*)temp->val)->Operande[num_op].ope_typ == ETI) {
@@ -170,12 +197,30 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
           }
           else {
             temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
-            ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd;
+            if(((instruction*)temp->val)->Operande[num_op].ope_typ == ETI) {
+              etiqu = rech_mot_symb(((instruction*)temp->val)->Operande[num_op].ope_val->eti,symb_t);
+              ((assembl*)temp_ass->val)->code_ligne = etiqu->deca;
+            }
+            else((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd;
           }
+        ((assembl*)temp_ass->val)->typ_aff = 0;
         }
       }
-      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".byte")) {
 
+      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".byte")) {
+        compteur = 0;
+        for(num_op=0;num_op<((instruction*)temp->val)->inst_def.nb_op;num_op++) {
+          if(num_op%4) {
+            ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << (6-2*compteur);
+            compteur += 1;
+          }
+          else {
+            temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
+            ((assembl*)temp_ass->val)->code_ligne |= ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << 6;
+            compteur=0;
+          }
+        ((assembl*)temp_ass->val)->typ_aff = 2* compteur;
+        }
       }
 
       if(strcmp(((instruction*)temp->val)->inst->lex.tok,".asciiz")) {

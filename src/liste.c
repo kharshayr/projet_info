@@ -30,7 +30,7 @@ Liste ajout_tete(void* c, Liste l) {
 
 Liste inserer_element(void* e, Liste l) {
 	Liste next = l->suiv;
-	Liste new = calloc(1,sizeof(*next));
+	Liste new = calloc(1,sizeof(*new));
 	if (new==NULL) return NULL;
 	l->suiv = new;
 	l->suiv->suiv = next;

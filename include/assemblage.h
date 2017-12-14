@@ -11,6 +11,15 @@ typedef struct assembl_s {
   int code_ligne;
   char* ligne;
   int typ_aff;
+  /*
+  0 : tout afficher
+  1 :
+  2 :
+  ..
+  8 :
+  9 : code non visible
+  10 : .. pour .space 
+  */
 } assembl;
 
 void affiche_assembl(void* );

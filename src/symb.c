@@ -1,6 +1,5 @@
 #define N 100
 
-#define _POSIX_C_SOURCE 200112L
 #include<symb.h>
 
 char * strdup(const char *str){
@@ -279,13 +278,14 @@ int to_decimal(char* hexa){
 	int deca=0;
 	int i,n=strlen(hexa);
 	int q=1;
+	strtoupper(hexa);
 	char signe=*hexa;
 	if (signe=='0'){
 		for (i=0;i<n-2;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
-				deca+=(*((hexa)+n-i-1)-87)*q;}
+				deca+=(*((hexa)+n-i-1)-55)*q;}
 			q=q*16;}}
 	else if (signe=='+' || signe=='-'){
 		if (*(hexa+1) >='1' && *(hexa+1)<='9') {
@@ -294,16 +294,15 @@ int to_decimal(char* hexa){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
-				deca+=(*((hexa)+n-i-1)-87)*q;}
+				deca+=(*((hexa)+n-i-1)-55)*q;}
 			q=q*16;}}
 	else if (signe >='1' && signe<='9') {
 		return 0;}
 	else{
 		return 1;}
 	if (signe=='-'){
-		sprintf(hexa,"%d",deca);
-		strcpy(hexa+1,hexa);
-		*hexa=signe;}
+		*hexa=signe;
+		sprintf(hexa+1,"%d",deca);}
 	else{
 		sprintf(hexa,"%d",deca);}
 	return 0;}
@@ -351,14 +350,20 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							while ((current_l-temp->nl && !liste_vide(p))==0){
 								switch(temp->typ){
 									case DECIMAL: /* Test validité arguments */
-										ajout_liste(bss_l,p,t->section,d);
-										d[bss]=d[bss]+atoi(temp->tok);
+										if (atof(temp->tok)<=4294967295 && atof(temp->tok)>=0){
+											ajout_liste(bss_l,p,t->section,d);
+											d[bss]=d[bss]+atoi(temp->tok);}
+										else{
+											temp->typ=ERREUR;}
 										break;
 									case HEXA:
 										to_decimal(temp->tok); /* On convertit l'HEXA en DECIMAL */
 										temp->typ=DECIMAL;
-										ajout_liste(bss_l,p,t->section,d);
-										d[bss]=d[bss]+atoi(temp->tok);
+										if (atof(temp->tok)<=4294967295 && atof(temp->tok)>=0){
+											ajout_liste(bss_l,p,t->section,d);
+											d[bss]=d[bss]+atoi(temp->tok);}
+										else{
+											temp->typ=ERREUR;}
 									case VIRGULE:
 										break;
 									default:
@@ -407,16 +412,22 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 								case HEXA:
 									to_decimal(temp->tok);
 									temp->typ=DECIMAL;
-									if (d[data]%4!=0){
-										d[data]=4+d[data]-d[data]%4;}
-									ajout_liste(data_l,p,t->section,d);
-									d[data]=d[data]+4;
+									if (atof(temp->tok)<=4294967295 && atof(temp->tok)>=0){
+										if (d[data]%4!=0){
+											d[data]=4+d[data]-d[data]%4;}
+										ajout_liste(data_l,p,t->section,d);
+										d[data]=d[data]+4;}
+									else{
+										temp->typ=ERREUR;}
 								break;
 								case DECIMAL:
-									if (d[data]%4!=0){
-										d[data]=4+d[data]-d[data]%4;}
-									ajout_liste(data_l,p,t->section,d);
-									d[data]=d[data]+4;
+									if (atof(temp->tok)<=4294967295 && atof(temp->tok)>=0){
+										if (d[data]%4!=0){
+											d[data]=4+d[data]-d[data]%4;}
+										ajout_liste(data_l,p,t->section,d);
+										d[data]=d[data]+4;}
+									else{
+										temp->typ=ERREUR;}
 									break;
 								case SYMBOLE:
 									if (d[data]%4!=0){
@@ -441,14 +452,20 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							while (current_l-temp->nl==0  && !liste_vide(p)){
 								switch(temp->typ){
 									case DECIMAL:
-										ajout_liste(data_l,p,t->section,d);
-										d[data]=d[data]+1;
+										if (atof(temp->tok)<=127 && atof(temp->tok)>=-128){
+											ajout_liste(data_l,p,t->section,d);
+											d[data]=d[data]+1;}
+										else{
+											temp->typ=ERREUR;}
 										break;
 									case HEXA:
 										to_decimal(temp->tok);
 										temp->typ=DECIMAL;
-										ajout_liste(data_l,p,t->section,d);
-										d[data]=d[data]+1;
+										if (atof(temp->tok)<=127 && atof(temp->tok)>=-128){
+											ajout_liste(data_l,p,t->section,d);
+											d[data]=d[data]+1;}
+										else{
+											temp->typ=ERREUR;}
 										break;
 									case VIRGULE:
 										break;
@@ -487,12 +504,18 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									case HEXA:
 										to_decimal(temp->tok);
 										temp->typ=DECIMAL;
-										ajout_liste(bss_l,p,t->section,d);
-										d[bss]=d[bss]+atoi(temp->tok);
+										if (atof(temp->tok)<=4294967295 && atof(temp->tok)>=0){
+											ajout_liste(bss_l,p,t->section,d);
+											d[bss]=d[bss]+atoi(temp->tok);}
+										else{
+											temp->typ=ERREUR;}
 										break;
 									case DECIMAL:
-										ajout_liste(data_l,p,t->section,d);
-										d[data]=d[data]+atoi(temp->tok);
+										if (atof(temp->tok)<=4294967295 && atof(temp->tok)>=0){
+											ajout_liste(data_l,p,t->section,d);
+											d[data]=d[data]+atoi(temp->tok);}
+										else{
+											temp->typ=ERREUR;}
 										break;
 									case VIRGULE:
 										break;
