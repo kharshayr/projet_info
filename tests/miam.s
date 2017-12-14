@@ -6,7 +6,7 @@ ADDI $t1,$t2, -3
     NEG $t2 , $t2
     ADDI $t1, $t2, 0x200
 byebye :
-	BLT $t1 , $t2, boucle
+	BLT $t1 , $t2 , boucle
 	NOP
 	JAL boucle
 lunchtime:
