@@ -119,7 +119,8 @@ int main ( int argc, char *argv[] ) {
     visualiser_liste(reloc_t_text,&affiche_reloc);
     Liste reloc_t_data = creer_table_reloc(arg_data,s);
 
-    calcul_code_assemblage(arg_text, arg_data, *bss_l, origine_l, nlines, s);
+    printf("\nListe d'assemblage : \n\n");
+    calcul_code_assemblage(arg_text, arg_data, *bss_l, origine_l, &nlines, s);
     visualiser_liste(*origine_l,&affiche_assembl);
 
 

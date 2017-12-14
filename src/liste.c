@@ -28,6 +28,16 @@ Liste ajout_tete(void* c, Liste l) {
 	return p;
 }
 
+Liste inserer_element(void* e, Liste l) {
+	Liste next = l->suiv;
+	Liste new = calloc(1,sizeof(*next));
+	if (new==NULL) return NULL;
+	l->suiv = new;
+	l->suiv->suiv = next;
+	l->suiv->val = e;
+	return l->suiv;
+}
+
 Liste supprimer_tete(Liste l) {
 	if (!liste_vide(l)) {Liste p;
 		p=l->suiv;

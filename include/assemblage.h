@@ -19,7 +19,7 @@ assembl* init_assembl(char*, int);
 Liste chercher_ligne_col(int , Liste );
 Liste chercher_ligne_bss(int , Liste );
 Liste chercher_ligne_ass(int , Liste* );
-void calcul_code_assemblage(Liste , Liste , Liste , Liste* , unsigned int , symb*);
+void calcul_code_assemblage(Liste , Liste , Liste , Liste* , unsigned int* , symb*);
 
 
 #endif

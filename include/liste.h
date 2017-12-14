@@ -12,8 +12,9 @@ typedef struct Liste_s {
 
 Liste creer_liste(void);
 int liste_vide(Liste );
-void visualiser_liste(Liste ,p_affiche);
+void visualiser_liste(Liste , p_affiche);
 Liste ajout_tete(void* , Liste );
+Liste inserer_element(void* , Liste );
 Liste supprimer_tete(Liste ) ;
 Liste ajout_queue(void* , Liste );
 Liste supprimen(int , Liste );

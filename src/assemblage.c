@@ -14,7 +14,7 @@ void affiche_assembl(void* e) {
     printf("\t\t     %s\n",((assembl*)e)->ligne);
   }
   else {
-    printf("%08x %08x %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
 }
 
@@ -52,10 +52,10 @@ Liste chercher_ligne_col(int num_ligne, Liste col){
     return p_col;
   }
   while(!liste_vide(p_col->suiv)) {
+    p_col=p_col->suiv;
     if(((instruction*)p_col->val)->inst->lex.nl==num_ligne){
       return p_col;
     }
-    p_col=p_col->suiv;
   }
   return NULL;
 }
@@ -67,11 +67,11 @@ Liste chercher_ligne_bss(int num_ligne, Liste col){
     return p_col;
   }
   while(!liste_vide(p_col->suiv)) {
+    p_col=p_col->suiv;
     printf("%i",((symb*)p_col->val)->lex.nl);
     if(((symb*)p_col->val)->lex.nl==num_ligne){
       return p_col;
     }
-    p_col=p_col->suiv;
   }
   return NULL;
 }
@@ -83,22 +83,22 @@ Liste chercher_ligne_ass(int num_ligne, Liste* ass){
     return p_ass;
   }
   while(!liste_vide(p_ass->suiv)) {
+    p_ass=p_ass->suiv;
     if(((assembl*)p_ass->val)->num_ligne==num_ligne){
       return p_ass;
     }
-    p_ass=p_ass->suiv;
   }
   return NULL;
 }
 
-void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste* assembl_l, unsigned int n_lines, symb* symb_t) {
+void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste* assembl_l, unsigned int* n_lines, symb* symb_t) {
   int i, j, num_op, pseudo;
   Liste temp;
   Liste temp_ass;
   unsigned long code;
   symb* etiqu;
 
-  for(i=0;i<n_lines;i++) {
+  for(i=0;i<*n_lines;i++) {
 
     temp = chercher_ligne_col(i,col_text);
 
@@ -107,16 +107,13 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
       temp_ass = chercher_ligne_ass(i,assembl_l);
       if(!liste_vide(temp->suiv) && ((instruction*)temp->suiv->val)->inst->lex.nl == i) pseudo=1;
       else pseudo = 0;
-      
+
       for(j=0;j<pseudo+1;j++) {
         if(j == 1) {
           assembl* new_ass = init_assembl("", i);
-          Liste next = temp_ass->suiv;
-          temp_ass->suiv=calloc(1,sizeof(*(temp->suiv)));
-          if(temp_ass==NULL) ERROR_MSG("Erreur allocation element assemblage pour pseudo assemblage.c l.117");
-          temp_ass->suiv->val=(void*)new_ass;
-          temp_ass->suiv->suiv=next;
+          temp_ass=inserer_element((void*)new_ass, temp_ass);
           temp=temp->suiv;
+          *n_lines +=1;
         }
 
         for(num_op=0;num_op<((instruction*)temp->val)->inst_def.nb_op;num_op++) {
@@ -160,7 +157,9 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
 
     temp = chercher_ligne_col(i,col_data);
     if(!liste_vide(temp)){
+      /*if(strcmp(((instruction*)temp->val)->)) {
 
+      }*/
     }
 
     temp = chercher_ligne_bss(i,col_bss);
