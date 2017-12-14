@@ -134,9 +134,6 @@ void pseudo_instr(Liste p, int nl){
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On referme la chaine */
 		return;}
 	else if (strcmp(temp->tok,"LW")==0){
@@ -168,9 +165,6 @@ void pseudo_instr(Liste p, int nl){
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;p->val=temp;
 		p->suiv=p_next; /* On referme la chaine */
 		return;}}}
 	else if (strcmp(temp->tok,"SW")==0){
@@ -202,9 +196,6 @@ void pseudo_instr(Liste p, int nl){
 		p->suiv=calloc(1,sizeof(Liste));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;p->val=temp;
 		p->suiv=p_next; /* On referme la chaine */
 		return;}}}
 	return;
@@ -542,7 +533,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
 							pseudo_instr(p,temp->nl);
-							while (current_l-temp->nl==0 && !liste_vide(p) && temp->typ!=DEUX_PTS){
+							while (current_l-temp->nl==0 && !liste_vide(p)){
 								if (temp->typ==HEXA){
 									to_decimal(temp->tok);
 									temp->typ=DECIMAL;}
@@ -554,8 +545,6 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									default:
 										ajout_liste(text_l,p,t->section,d);
 										break;}
-								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
-							if (temp->typ==DEUX_PTS){
 								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 							d[text]=d[text]+4;}}
 					else{
