@@ -14,4 +14,5 @@ byebye:
     JAL viteviteauru
 .data
 lunchtime : .word 12
+.byte 0xAA, 0xBB, 0xCC
 .asciiz "blabla"

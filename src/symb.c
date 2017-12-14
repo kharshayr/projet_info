@@ -278,9 +278,9 @@ int to_decimal(char* hexa){
 	int deca=0;
 	int i,n=strlen(hexa);
 	int q=1;
-	strtoupper(hexa);
 	char signe=*hexa;
 	if (signe=='0'){
+    strtoupper(hexa);
 		for (i=0;i<n-2;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
@@ -288,6 +288,7 @@ int to_decimal(char* hexa){
 				deca+=(*((hexa)+n-i-1)-55)*q;}
 			q=q*16;}}
 	else if (signe=='+' || signe=='-'){
+    strtoupper(hexa);
 		if (*(hexa+1) >='1' && *(hexa+1)<='9') {
 			return 0;}
 		for (i=0;i<n-3;i++){
@@ -452,7 +453,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							while (current_l-temp->nl==0  && !liste_vide(p)){
 								switch(temp->typ){
 									case DECIMAL:
-										if (atof(temp->tok)<=127 && atof(temp->tok)>=-128){
+										if (atof(temp->tok)<=255 && atof(temp->tok)>=0){
 											ajout_liste(data_l,p,t->section,d);
 											d[data]=d[data]+1;}
 										else{
@@ -461,7 +462,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									case HEXA:
 										to_decimal(temp->tok);
 										temp->typ=DECIMAL;
-										if (atof(temp->tok)<=127 && atof(temp->tok)>=-128){
+										if (atof(temp->tok)<=255 && atof(temp->tok)>=0){
 											ajout_liste(data_l,p,t->section,d);
 											d[data]=d[data]+1;}
 										else{
