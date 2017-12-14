@@ -1,16 +1,17 @@
 # allons au ru
 .set noreorder
 .text
-ADD $t1,$t2, $t3
- SW $t4 , +200($t1)
+ADDI $t1,$t2, -3
+ SW $t4 , boucle
     NEG $t2 , $t2
     ADDI $t1, $t2, 0x200
 byebye :
 	BLT $t1 , $t2, boucle
 	NOP
 	JAL boucle
-  J lunchtime
+lunchtime:
  LW $t4 , toucle
 .data
-lunchtime : .word 12,boucle,12
-.asciiz "blabla "
+.word 12,boucle,12
+.asciiz "bl       a::          bla "
+.word 12

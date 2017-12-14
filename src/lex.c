@@ -224,7 +224,18 @@ void lex_standardise(char* in, char* out) {                      /* Fonction qui
     char* q=out;
     int l;
     while (p<in+strlen(in)) {                                /* Premier traitement : on rajoute des espaces autour de touts les caractères spécifiques*/
-        if (*p==':' || *p==',') {                        /* Pour les caractères nécessitant un espace avant et après*/
+	if (*p=='"'){
+		*q=*p;
+		q++;
+		p++;
+		while (*p!='"'){
+			*q=*p;
+			p++;
+			q++;}
+		*q=' ';
+		q++;
+		*q=*p;}
+        else if (*p==':' || *p==',') {                        /* Pour les caractères nécessitant un espace avant et après*/
             *q=' ';
             q++;
             *q=*p;
@@ -245,26 +256,33 @@ void lex_standardise(char* in, char* out) {                      /* Fonction qui
     *q='\0';
     p=in;
     q=out;
-    strcpy(p,q);                                           /* On copie pour le second traitement*/
-    q=out;
+    p=strcpy(p,q); /* On copie pour le second traitement*/
     l=strlen(q);
     p++;
-    while (p<in+l+1) {                                     /* Second traitement : on retire tout les espaces en trop*/
-        if (isblank((int) *p) && *q!=' ') {            /* On rajoute un espace si on en a pas encore rajouté un*/
+    while (p<in+l+1) { /* Second traitement : on retire tout les espaces en trop*/
+	if (*p=='"'){
+		q++;
+		*q=*p;
+		p++;
+		q++;
+		while (*q!='"'){
+			*q=*p;
+			p++;
+			q++;}
+		*q=*p;}
+        else if (isblank((int) *p) && *q!=' ') { /* On rajoute un espace si on en a pas encore rajouté un*/
             q++;
             *q=' ';
         }
-        else if (isblank((int) *p) && *q==' ') {}      /* On passe juste a la suite si on a déjà mis un espace*/
-        else if (!isblank((int) *p) && *q==' ') {      /* Si il n'y a plus d'espaces à supprimer, on recopie*/
+        else if (isblank((int) *p) && *q==' ') {} /* On passe juste a la suite si on a déjà mis un espace*/
+        else if (!isblank((int) *p) && *q==' ') { /* Si il n'y a plus d'espaces à supprimer, on recopie*/
             q++;
             *q=*p;
         }
-        else {                                         /* Sinon on recopie simplement*/
+        else { /* Sinon on recopie simplement*/
             q++;
-            *q=*p;
-        }
-        p++;
-    }
+            *q=*p;}
+        p++;}
     *q='\0';
     return;
 }
@@ -287,11 +305,11 @@ Liste lex_load_file( char *file, unsigned int *nlines, Liste lp ) {
 
         /*read source code line-by-line */
         if ( NULL != fgets( line, STRLEN-1, fp ) ) {
-            line[strlen(line)-1] = '\0';  /* eat final '\n' */
+            line[strlen(line)-1] = '\0'; /* eat final '\n' */
             (*nlines)++;
             /*      printf("Ligne %i : %s\n", *nlines, line);*/
             if ( 0 != strlen(line) ) {
-                lex_standardise(line,res);                     /*On normalise le texte*/
+                lex_standardise(line,res); /*On normalise le texte*/
                 lp=lex_read_line(res,*nlines,lp); /* Machine à état + stockage dans une liste */
             }
         }
