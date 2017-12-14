@@ -1,5 +1,6 @@
 #define N 100
 
+#define _POSIX_C_SOURCE 200112L
 #include<symb.h>
 
 void pseudo_instr(Liste p, int nl){

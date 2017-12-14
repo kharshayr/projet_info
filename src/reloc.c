@@ -26,28 +26,28 @@ reloc* init_entree_reloc(instruction* i, int num_op, symb* symb_t) {
 
     r->etiquette = rech_mot_symb(i->Operande[num_op].ope_val->eti,symb_t);
 
-    int d = i->inst->deca;
+    r->rel_addresse = i->inst->deca;
     char* typOp = i->inst_def.arg;
 
     if(!strcmp(typOp,"ABS")) {
         r->rel_type = R_MIPS_26;
-        r->rel_addresse = d;
+        i->Operande[num_op].ope_val->abs = (r->etiquette->deca)>>2;
+        i->Operande[num_op].ope_typ = ABS;
     }
 
     else if(!strcmp(typOp,"REL")) {
-        i->Operande[num_op].ope_val->rel= (d+4 - (r->etiquette->deca))>>2;
+        i->Operande[num_op].ope_val->rel = ((r->etiquette->deca) - (i->inst->deca) -4)>>2;
         i->Operande[num_op].ope_typ=REL;
         return NULL;
     }
 
-    else if(!strcmp(typOp,"IMD")) {
-        if(strcmp(i->inst->lex.tok, "lui") == 0) {r->rel_type = R_MIPS_HI16;}
+    else if(!strcmp(typOp,"I") || !strcmp(typOp,"OFB")) {
+        if(strcmp(i->inst->lex.tok, "LUI") == 0) {r->rel_type = R_MIPS_HI16;}
         else {r->rel_type = R_MIPS_LO16;}
     }
 
     else if(!strcmp(typOp,"WRD")) {
         r->rel_type = R_MIPS_32;
-        r->rel_addresse = d;
     }
 
     else {

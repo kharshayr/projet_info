@@ -18,6 +18,7 @@
 #include <notify.h>
 #include <lex.h>
 #include <liste.h>
+#include <assemblage.h>
 
 void affiche(void* e) {
     static char* mesval[] = {"COMMENT", "NL", "SYMBOLE", "DEUX_PTS", "VIRGULE", "DEB_OFFSETBASE", "OFFSETBASE", "DIRECTIVE", "REGISTRE", "DECIMAL", "HEXA\t", "ZERO", "CHAINE\t", "INIT", "ERREUR"};
@@ -269,7 +270,7 @@ void lex_standardise(char* in, char* out) {                      /* Fonction qui
     return;
 }
 
-Liste lex_load_file( char *file, unsigned int *nlines, Liste lp ) {
+Liste lex_load_file( char *file, unsigned int *nlines, Liste lp, Liste* origine) {
 
     FILE *fp   = NULL;
     char line[STRLEN]; /* original source line */
@@ -288,6 +289,7 @@ Liste lex_load_file( char *file, unsigned int *nlines, Liste lp ) {
         /*read source code line-by-line */
         if ( NULL != fgets( line, STRLEN-1, fp ) ) {
             line[strlen(line)-1] = '\0';  /* eat final '\n' */
+            *origine = ajout_queue(init_assembl(line,*nlines+1),*origine);
             (*nlines)++;
             /*      printf("Ligne %i : %s\n", *nlines, line);*/
             if ( 0 != strlen(line) ) {

@@ -19,6 +19,7 @@
 #include <dico.h>
 #include <verif.h>
 #include <reloc.h>
+#include <assemblage.h>
 
 /**
  * @param exec Name of executable.
@@ -75,7 +76,8 @@ int main ( int argc, char *argv[] ) {
 
     /* ---------------- do the lexical analysis -------------------*/
     Liste l = creer_liste();
-    l=lex_load_file(argv[1],&nlines,l);
+    Liste* origine_l = calloc(1,sizeof(origine_l));
+    l=lex_load_file(argv[1],&nlines,l,origine_l);
     DEBUG_MSG("source code got %d lines",nlines);
     visualiser_liste(l,&affiche);
     affiche_erreurs_lex(l);
@@ -105,29 +107,29 @@ int main ( int argc, char *argv[] ) {
     int nb_inst = 25;
     inst_def_t * tab;
     tab=lect_dico_int("tests/dico.s", &nb_inst);
-    /*printf("\nDictionnaire d'instructions\n\n");
-    int i;
-    for (i=0;i<29;i++) {
-   	 printf("%s %c %d %s\n", tab[i].symbole, tab[i].type, tab[i].nb_op,tab[i].arg);}*/
 
     /* Examen argument instruction data */
     Liste arg_text=verif_arg_text(text_l,tab,nb_inst,s);
     affiche_erreurs_dico(*text_l);
     Liste arg_data=verif_arg_data(data_l);
-
     affiche_liste_ope_text(arg_text);
-    /*affiche_liste_ope_data(arg_data);*/
+    affiche_liste_ope_data(arg_data);
+
     Liste reloc_t_text = creer_table_reloc(arg_text,s);
     visualiser_liste(reloc_t_text,&affiche_reloc);
     Liste reloc_t_data = creer_table_reloc(arg_data,s);
 
+    calcul_code_assemblage(arg_text, arg_data, *bss_l, origine_l, nlines, s);
+    visualiser_liste(*origine_l,&affiche_assembl);
+
+
+
+    /* On libère */
     free(tab);
     free(data_l);
     free(text_l);
     free(bss_l);
     free(s);
-
-
 
     exit( EXIT_SUCCESS );
 }

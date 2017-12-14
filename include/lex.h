@@ -29,7 +29,7 @@ lexeme*	init_lex(char*, int );
 void	lex_fsm(lexeme* );
 void	lex_standardise( char*, char*  );
 Liste	lex_read_line( char *, int, Liste);
-Liste	lex_load_file( char *, unsigned int *, Liste );
+Liste	lex_load_file( char *, unsigned int *, Liste , Liste*);
 
 
 #endif /* _LEX_H_ */

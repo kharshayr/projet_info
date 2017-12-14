@@ -6,7 +6,7 @@
 #include <dico.h>
 
 typedef enum opetyp_e {
-  REG, IMD, REL, SA, ABS, OFB, ERR_TYP_OP ,ETI, WRD, CHN
+  REG, IMD, REL, SA, ABS, OFB, ERR_TYP_OP , ETI, WRD, CHN
 } opetyp;
 
 typedef union opeval_u {
@@ -16,7 +16,7 @@ typedef union opeval_u {
   char* eti;
   unsigned short sa;
   unsigned int abs;
-  char* ofb; /* "chaine de C pour  */
+  char* ofb;
   unsigned long wrd;
   char* chaine;
 } opeval;
