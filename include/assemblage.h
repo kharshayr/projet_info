@@ -10,7 +10,7 @@ typedef struct assembl_s {
   int decalage;
   int code_ligne;
   char* ligne;
-  int empty;
+  int typ_aff;
 } assembl;
 
 void affiche_assembl(void* );

@@ -10,10 +10,10 @@
 
 void affiche_assembl(void* e) {
   printf("%2i ", ((assembl*)e)->num_ligne);
-  if(((assembl*)e)->empty){
+  if(((assembl*)e)->typ_aff==1){
     printf("\t\t     %s\n",((assembl*)e)->ligne);
   }
-  else {
+  else if(((assembl*)e)->typ_aff == 0){
     printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
 }
@@ -41,7 +41,7 @@ assembl* init_assembl(char* line, int line_num) {
   a->ligne = calloc(1,sizeof(char)*strlen(line));
   strcpy(a->ligne,line);
   a->num_ligne = line_num;
-  a->empty = 1;
+  a->typ_aff = 1;
   return a;
 }
 
@@ -151,19 +151,44 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
           ((assembl*)temp_ass->val)->code_ligne |= code | ((instruction*)temp->val)->inst_def.codeBinaire; /* ET entre masque définition et code */
         }
         ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca;
-        ((assembl*)temp_ass->val)->empty = 0;
+        ((assembl*)temp_ass->val)->typ_aff = 0;
       }
     }
 
     temp = chercher_ligne_col(i,col_data);
     if(!liste_vide(temp)){
-      /*if(strcmp(((instruction*)temp->val)->)) {
+      temp_ass = chercher_ligne_ass(i,assembl_l);
 
-      }*/
+      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".word")) {
+        for(num_op=0;num_op<((instruction*)temp->val)->inst_def.nb_op;num_op++) {
+          if(num_op==0) {
+            if(((instruction*)temp->val)->Operande[num_op].ope_typ == ETI) {
+              etiqu = rech_mot_symb(((instruction*)temp->val)->Operande[num_op].ope_val->eti,symb_t);
+              ((assembl*)temp_ass->val)->code_ligne = etiqu->deca;
+            }
+            else ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd;
+          }
+          else {
+            temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
+            ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd;
+          }
+        }
+      }
+      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".byte")) {
+
+      }
+
+      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".asciiz")) {
+
+      }
+
+      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".space")) {
+
+      }
     }
 
     temp = chercher_ligne_bss(i,col_bss);
-    if(liste_vide(temp)){
+    if(!liste_vide(temp)){
 
     }
     else {
