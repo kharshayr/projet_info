@@ -3,6 +3,13 @@
 #define _POSIX_C_SOURCE 200112L
 #include<symb.h>
 
+char * strdup(const char *str){
+    int n = strlen(str) + 1;
+    char *dup = malloc(n);
+    if(dup){
+        strcpy(dup, str);}
+    return dup;}
+
 void pseudo_instr(Liste p, int nl){
 	lexeme* temp=p->val;
 	strtoupper(temp->tok);
@@ -12,18 +19,15 @@ void pseudo_instr(Liste p, int nl){
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $0 */
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("0");temp->typ=DECIMAL;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On referme la chaine */
 		return;}
 	else if (strcmp(temp->tok,"MOVE")==0){ /* Regarder comment LI fonctionne */
@@ -45,8 +49,7 @@ void pseudo_instr(Liste p, int nl){
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return;}
 	else if (strcmp(temp->tok,"NEG")==0){ /* Regarder comment LI fonctionne */
@@ -67,8 +70,7 @@ void pseudo_instr(Liste p, int nl){
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return;}
 	else if (strcmp(temp->tok,"LI")==0){
@@ -89,19 +91,16 @@ void pseudo_instr(Liste p, int nl){
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $zero */
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return;}
 	else if (strcmp(temp->tok,"BLT")==0){
 		Liste p_memo=p->suiv; /* On mémorise le token tu premier registre */
-		Liste p_ini; /* Token a partir duquel il faudra incrementer le numéro de ligne */
 		temp->tok=strdup("SLT"); /* On remplace le token BLT par SLT */
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl; /* On créé le lexeme suivant */
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On repointe vers le premier registre */
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){ /* If évaluant la validité des types des arguments donnés */
 			p=p->suiv;}
@@ -120,67 +119,85 @@ void pseudo_instr(Liste p, int nl){
 		else{
 			return;}
 		if ((((lexeme*)(p->suiv->val))->typ==DECIMAL || ((lexeme*)(p->suiv->val))->typ==HEXA || ((lexeme*)(p->suiv->val))->typ==SYMBOLE) && !liste_vide(p->suiv)){
-			p_memo=p->suiv;}          /* On mémorise l'adresse de la target */
+			p_memo=p->suiv;} /* On mémorise l'adresse de la target */
 		else{
 			return;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("BNE");temp->typ=SYMBOLE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p_ini=p;  /* On incremente a partir de BNE */
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
 		p->suiv=p_memo; /* On referme la chaine */
-		while (!liste_vide(p_ini)){           /* On increment les numero de lignes */
-			((lexeme*)p_ini->val)->nl+=1;
-			p_ini=p_ini->suiv;}
 		return;}
 	else if (strcmp(temp->tok,"LW")==0){
 		if(!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv) && !liste_vide(p->suiv->suiv->suiv)){
 		if (((lexeme*)p->suiv->val)->typ==REGISTRE && ((lexeme*)p->suiv->suiv->suiv->val)->typ==SYMBOLE){
-		Liste p_next=p->suiv->suiv->suiv->suiv,p_reg=p->suiv,p_eti=p->suiv->suiv->suiv,p_ini;
+		Liste p_next=p->suiv->suiv->suiv->suiv,p_reg=p->suiv,p_eti=p->suiv->suiv->suiv;
 		temp->tok=strdup("LUI"); /* On remplace le token LW par LUI*/
 		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
 		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv; /*On ajoute le maillon a la chaine */
-		p->val=temp;
+		p=p->suiv;p->val=temp; /* On ajoute le maillon a la chaine */
 		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("LW");temp->typ=SYMBOLE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
-		p_ini=p; /* Elements a partir duquel on incrementera les numeros de lignes */
+		p=p->suiv;p->val=temp;
 		p->suiv=p_reg; /* Prochain lexeme sera le registre */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=calloc(1,sizeof(char*));
 		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
 		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
 		temp->typ=OFFSETBASE;temp->nl=nl;
 		p->suiv=calloc(1,sizeof(Liste));
-		p=p->suiv;
-		p->val=temp;
+		p=p->suiv;p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
 		p->suiv=p_next; /* On referme la chaine */
-		while (!liste_vide(p_ini)){  /* On incremente les numéro de lignes car on a rajouté une ligne d'instruction */
-			((lexeme*)p_ini->val)->nl+=1;
-			p_ini=p_ini->suiv;}
+		return;}}}
+	else if (strcmp(temp->tok,"SW")==0){
+		if(!liste_vide(p->suiv) && !liste_vide(p->suiv->suiv) && !liste_vide(p->suiv->suiv->suiv)){
+		if (((lexeme*)p->suiv->val)->typ==REGISTRE && ((lexeme*)p->suiv->suiv->suiv->val)->typ==SYMBOLE){
+		Liste p_next=p->suiv->suiv->suiv->suiv,p_reg=p->suiv,p_eti=p->suiv->suiv->suiv;
+		temp->tok=strdup("LUI"); /* On remplace le token SW par LUI*/
+		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
+		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;p->val=temp; /* On ajoute le maillon a la chaine */
+		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
+		p=p->suiv;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup("SW");temp->typ=SYMBOLE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;p->val=temp;
+		p->suiv=p_reg; /* Prochain lexeme sera le registre */
+		p=p->suiv;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		temp->tok=calloc(1,sizeof(char*));
+		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
+		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
+		temp->typ=OFFSETBASE;temp->nl=nl;
+		p->suiv=calloc(1,sizeof(Liste));
+		p=p->suiv;p->val=temp;
+		temp=calloc(1,sizeof(lexeme));
+		p->suiv=p_next; /* On referme la chaine */
 		return;}}}
 	return;
 	}
@@ -210,7 +227,7 @@ void affiche_erreurs_gram(Liste l){
 	    l=l->suiv;}
 }
 
-void ajout_liste(Liste* l, Liste p,int t,int* d){ /*Fonction qui allonge et rajoute un élément a la liste */
+void ajout_liste(Liste* l, Liste p,int t,int* d){ /* Fonction qui allonge et rajoute un élément a la liste */
 	symb* temp=calloc(1,sizeof(symb));
 	temp->lex=*((lexeme*)p->val);
 	temp->deca=d[t];
@@ -248,21 +265,25 @@ int to_decimal(char* hexa){
 	int i,n=strlen(hexa);
 	int q=1;
 	char signe=*hexa;
-	if (*(hexa)=='0'){
+	if (signe=='0'){
 		for (i=0;i<n-2;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
 				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
-	else if (*(hexa)=='+' || *(hexa)=='-'){
+	else if (signe=='+' || signe=='-'){
+		if (*(hexa+1) >='1' && *(hexa+1)<='9') {
+			return 0;}
 		for (i=0;i<n-3;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
 			else{
 				deca+=(*((hexa)+n-i-1)-87)*q;}
 			q=q*16;}}
-	else {
+	else if (signe >='1' && signe<='9') {
+		return 0;}
+	else{
 		return 1;}
 	if (signe=='-'){
 		sprintf(hexa,"%d",deca);
@@ -273,7 +294,7 @@ int to_decimal(char* hexa){
 	return 0;}
 
 void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
-	int* d=calloc(3,sizeof(int));/* Stockage et initialisation des decalages [bss,data,text] */
+	int* d=calloc(3,sizeof(int)); /* Stockage et initialisation des decalages [bss,data,text] */
 	Liste p=l;
 	lexeme* temp=p->val;
 	symb* t=calloc(1,sizeof(symb));
@@ -297,7 +318,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					break;
 				default:
 					temp->typ=ERREUR;
-					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/* ERREUR, on veut forcément un COMMENT ou une DIRECTIVE */
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* ERREUR, on veut forcément un COMMENT ou une DIRECTIVE */
 					break;}
 			break;
 		case bss:
@@ -325,7 +346,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									case VIRGULE:
 										break;
 									default:
-										temp->typ=ERREUR;/* ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										temp->typ=ERREUR; /* ERREUR, on attend que VIRGULE et DECIMAL en argument */
 										break;}
 								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 						else{
@@ -333,25 +354,25 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else{
 						temp->typ=ERREUR;
-						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}/* ERREUR, pas d'autres directives acceptées dans .bss */
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;}} /* ERREUR, pas d'autres directives acceptées dans .bss */
 					break;
 				case COMMENT:
 					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* On ignore les commentaires */
 					break;
 				case SYMBOLE:
-					if (!liste_vide(p->suiv)){ /*Si jamais on définit une étiquette dans bss */
+					if (!liste_vide(p->suiv)){ /* Si jamais on définit une étiquette dans bss */
 						if (((lexeme*)p->suiv->val)->typ==DEUX_PTS){
 							t->lex=*temp;
 							t->deca=d[bss];
-							ajout_tab(s,t); /* On l ajoute a la table des symboles */
+							ajout_tab(s,t); /* On l'ajoute a la table des symboles */
 							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 						else{
 							temp->typ=ERREUR;
-							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}/* ERREUR, on veut pas d'instruction */
+							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}} /* ERREUR, on veut pas d'instruction */
 					break;
 				default:
 					temp->typ=ERREUR;
-					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/* ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE dans cette section */
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE dans cette section */
 					break;}
 			break;
 		case data:
@@ -391,7 +412,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									break;
 
 								default:
-									temp->typ=ERREUR;/* ERREUR, on attend un DECIMAL ou un HEXA */
+									temp->typ=ERREUR; /* ERREUR, on attend un DECIMAL ou un HEXA */
 									break;}
 								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 							else{
@@ -416,7 +437,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 									case VIRGULE:
 										break;
 									default:
-										temp->typ=ERREUR;/* ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										temp->typ=ERREUR; /* ERREUR, on attend que VIRGULE et DECIMAL en argument */
 										break;}
 								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 						else{
@@ -430,12 +451,12 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 								switch(temp->typ){
 									case CHAINE:
 										ajout_liste(data_l,p,t->section,d);
-										d[data]=d[data]+strlen(temp->tok)-3;/*-3 Du aux espaces rajoutés par standardise + les guillemets*/
+										d[data]=d[data]+strlen(temp->tok)-3; /* -3 Du aux espaces rajoutés par standardise + les guillemets*/
 										break;
 									case VIRGULE:
 										break;
 									default:
-										temp->typ=ERREUR;/*ERREUR, on attend que VIRGULE et DECIMAL en argument */
+										temp->typ=ERREUR; /* ERREUR, on attend que VIRGULE et DECIMAL en argument */
 										break;}
 									p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 						else{
@@ -482,12 +503,12 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							p=p->suiv;p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else{
 						temp->typ=ERREUR;
-						p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR, on veut pas d'instruction */}
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* ERREUR, on veut pas d'instruction */}
 					break;
 
 				default:
 					temp->typ=ERREUR;
-					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE */
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* ERREUR, on attend que DIRECTIVE ou COMMENT ou ETIQUETTE */
 					break;}
 			break;
 		case text:
@@ -499,7 +520,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".data")==0){init_symb(t);}
 					else {
 						temp->typ=ERREUR;
-						p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR on attend aucune DIRECTIVE autre que de section */}
+						p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* ERREUR on attend aucune DIRECTIVE autre que de section */}
 					break;
 				case COMMENT:
 					p=p->suiv;if (!liste_vide(p)){temp=p->val;}
@@ -520,6 +541,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 								switch (temp->typ){
 									case VIRGULE:
 										break;
+									case COMMENT:
+										break;
 									default:
 										ajout_liste(text_l,p,t->section,d);
 										break;}
@@ -531,7 +554,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					break;
 				default:
 					temp->typ=ERREUR;
-					p=p->suiv;if (!liste_vide(p)){temp=p->val;}/*ERREUR, on attend pas autre chose */
+					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* ERREUR, on attend pas autre chose */
 					break;}
 			break;
 		default:

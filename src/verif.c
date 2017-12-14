@@ -136,7 +136,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 					type=dico[index_dico].type;
 					arg=dico[index_dico].arg;
 					if (type=='R'){
-						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
+						while (current_nl-temp->lex.nl==0 && !liste_vide(p) && nb_op!=0){
 							switch (temp->lex.typ){
 								case REGISTRE:
 									mnemo=rech_mot(temp->lex.tok,reg_mnemo);
@@ -201,7 +201,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 						else{
 							current_inst->lex.typ=ERREUR;}}
 					else if (type=='I'){
-						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
+						while (current_nl-temp->lex.nl==0 && !liste_vide(p) && nb_op!=0){
 							switch (temp->lex.typ){
 								case REGISTRE:
 									mnemo=rech_mot(temp->lex.tok,reg_mnemo);
@@ -256,7 +256,8 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 											temp->lex.typ=ERREUR;
 											current_inst->lex.typ=ERREUR;}
 										temp->lex.tok[i]='\0';
-										if (to_decimal(temp->lex.tok)==0){
+										i=to_decimal(temp->lex.tok);
+										if (i==0){
 											temp->lex.typ=DECIMAL;}
 										else{
 											temp->lex.typ=SYMBOLE;}
@@ -325,7 +326,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 						else{
 							current_inst->lex.typ=ERREUR;}}
 					else if (type=='J'){
-						while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
+						while (current_nl-temp->lex.nl==0 && !liste_vide(p) && nb_op!=0){
 							switch (temp->lex.typ){
 								case REGISTRE:
 									mnemo=rech_mot(temp->lex.tok,reg_mnemo);
