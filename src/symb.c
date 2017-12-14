@@ -280,7 +280,7 @@ int to_decimal(char* hexa){
 	int q=1;
 	char signe=*hexa;
 	if (signe=='0'){
-    strtoupper(hexa);
+		strtoupper(hexa);
 		for (i=0;i<n-2;i++){
 			if ((hexa)[n-1-i]<57){
 				deca+=(*((hexa)+n-i-1)-48)*q;}
@@ -288,7 +288,7 @@ int to_decimal(char* hexa){
 				deca+=(*((hexa)+n-i-1)-55)*q;}
 			q=q*16;}}
 	else if (signe=='+' || signe=='-'){
-    strtoupper(hexa);
+		strtoupper(hexa);
 		if (*(hexa+1) >='1' && *(hexa+1)<='9') {
 			return 0;}
 		for (i=0;i<n-3;i++){

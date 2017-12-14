@@ -15,6 +15,7 @@ byebye :
 lunchtime:
  LW $t4 , toucle
 .data
+.byte 0xFF
 .word 12,boucle,12
 .asciiz "bl       a::          bla "
 .word 12
