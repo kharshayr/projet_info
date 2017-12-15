@@ -334,6 +334,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* Si commentaire on passe a la suite */
 					break;
 				default:
+					printf("Type incorrect pour %s ligne %d en dehors de toute section \n",temp->tok,temp->nl);
 					temp->typ=ERREUR;
 					p=p->suiv;if (!liste_vide(p)){temp=p->val;} /* ERREUR, on veut forcément un COMMENT ou une DIRECTIVE */
 					break;}
@@ -381,7 +382,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							temp->typ=ERREUR;exit( EXIT_FAILURE ); /* Si on a pas d'argument, ERREUR */
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else{
-						printf("Directive invalide \n");
+						printf("Directive invalide %s ligne %d \n",temp->tok,temp->nl);
 						temp->typ=ERREUR;exit( EXIT_FAILURE );
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}} /* ERREUR, pas d'autres directives acceptées dans .bss */
 					break;
@@ -413,8 +414,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 					else if (strcmp(temp->tok,".bss")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
-					else if (strcmp(temp->tok,".word")==0  && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA || (((lexeme*)p->suiv->val)->typ==SYMBOLE && ((lexeme*)p->suiv->val)->nl==current_l)){
+					else if (strcmp(temp->tok,".word")==0){
+						if(!liste_vide(p->suiv) && (((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA || (((lexeme*)p->suiv->val)->typ==SYMBOLE && ((lexeme*)p->suiv->val)->nl==current_l))){
 						ajout_liste(data_l,p,t->section,d);
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 						while (current_l-temp->nl==0  && !liste_vide(p)){
@@ -459,8 +460,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 								printf("Besoin d'au moins un Argument %s ligne %d \n",temp->tok,temp->nl);
 								temp->typ=ERREUR;exit( EXIT_FAILURE );
 								p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
-					else if (strcmp((temp->tok),".byte")==0  && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
+					else if (strcmp((temp->tok),".byte")==0){
+						if(!liste_vide(p->suiv) && (((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA)){
 							ajout_liste(data_l,p,t->section,d);
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while (current_l-temp->nl==0  && !liste_vide(p)){
@@ -494,8 +495,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							printf("Besoin d'au moins un argument pour %s ligne %d \n",temp->tok,temp->nl);
 							temp->typ=ERREUR;exit( EXIT_FAILURE );
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
-					else if (strcmp(temp->tok,".asciiz")==0 && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==CHAINE || ((lexeme*)p->suiv->val)->typ==VIRGULE){
+					else if (strcmp(temp->tok,".asciiz")==0){
+						if(!liste_vide(p->suiv) && (((lexeme*)p->suiv->val)->typ==CHAINE || ((lexeme*)p->suiv->val)->typ==VIRGULE)){
 							ajout_liste(data_l,p,t->section,d);
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while (current_l-temp->nl==0 && !liste_vide(p)){
@@ -515,8 +516,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							printf("Besoin d'au moins un argument %s ligne %d \n",temp->tok,temp->nl);
 							temp->typ=ERREUR;exit( EXIT_FAILURE );
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
-					else if (strcmp((temp->tok),".space")==0 && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
+					else if (strcmp((temp->tok),".space")==0){
+						if(!liste_vide(p->suiv) && (((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE)){
 							ajout_liste(data_l,p,t->section,d);
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while (current_l-temp->nl==0  && !liste_vide(p)){
@@ -551,7 +552,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 							temp->typ=ERREUR;exit( EXIT_FAILURE );
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}}}
 					else{
-						temp->typ=ERREUR;
+						printf("Directive %s ligne %d dans data invalide \n",temp->tok,temp->nl);
+						temp->typ=ERREUR;exit( EXIT_FAILURE );
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}}
 					break;
 				case COMMENT:
@@ -627,6 +629,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					break;}
 			break;
 		default:
+			printf("Specifiez un section %s ligne %d \n",temp->tok,temp->nl);
 			temp->typ=ERREUR;exit( EXIT_FAILURE );
 			p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 			break;}}

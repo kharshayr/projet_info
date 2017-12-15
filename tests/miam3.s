@@ -17,8 +17,4 @@ byebye:
 lunchtime : .word 12 , 2
     .byte 13 , 13 , 13
 .asciiz "blabla"
-.word menu
-
-.bss
-menu:
-.space 24
+.word
