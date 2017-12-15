@@ -70,7 +70,7 @@ int main ( int argc, char *argv[] ) {
 
 
     if ( NULL == file ) {
-        fprintf( stderr, "Missing ASM source file, aborting.\n" );
+        fprintf(stderr, "Missing ASM source file, aborting.\n" );
         exit( EXIT_FAILURE );
     }
 
@@ -122,8 +122,41 @@ int main ( int argc, char *argv[] ) {
     printf("\nListe d'assemblage : \n\n");
     calcul_code_assemblage(arg_text, arg_data, *bss_l, origine_l, &nlines, s);
     visualiser_liste(*origine_l,&affiche_assembl);
-    
-
+    char* f_racine=argv[1];
+    char* q=f_racine;
+    while (strcmp(q,".s")!=0){
+	q++;}
+    strcpy(q,".l");
+    Liste p=*origine_l;
+    FILE *fichier;
+    fichier = fopen(f_racine,"w");
+    if (fichier != NULL){
+	while (!liste_vide(p)){
+  		if(((assembl*)p)->typ_aff==9){
+   		 	fprintf(fichier,"\t\t     %s\n",((assembl*)p)->ligne);}
+ 		else if(((assembl*)p->val)->typ_aff == 0){
+   			fprintf(fichier,"%08X %08X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+  		else if(((assembl*)p->val)->typ_aff == 10){
+   		 	fprintf(fichier,"%08X %08X %s\n", ((assembl*)p)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+ 	 	else if(((assembl*)p->val)->typ_aff == 1){
+   		 	fprintf(fichier,"%08X %1X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+  		else if(((assembl*)p->val)->typ_aff == 2){
+    			fprintf(fichier,"%08X %2X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+		else if(((assembl*)p->val)->typ_aff == 3){
+    			fprintf(fichier,"%08X %3X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+ 	 	else if(((assembl*)p->val)->typ_aff == 4){
+   		 	fprintf(fichier,"%08X %4X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+  		else if(((assembl*)p->val)->typ_aff == 5){
+    			fprintf(fichier,"%08X %5X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+  		else if(((assembl*)p->val)->typ_aff == 6){
+    			fprintf(fichier,"%08X %6X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+  		else if(((assembl*)p->val)->typ_aff == 7){
+    			fprintf(fichier,"%08X %7X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+  		else if(((assembl*)p->val)->typ_aff == 8){
+   			fprintf(fichier,"%08X %8X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);}
+	p=p->suiv;}}
+	
+   fclose(fichier);
 
     /* On libère */
     free(tab);

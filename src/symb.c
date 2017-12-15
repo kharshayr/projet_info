@@ -242,7 +242,7 @@ void affiche_erreurs_gram(Liste l){
 }
 
 void ajout_liste(Liste* l, Liste p,int t,int* d){ /* Fonction qui allonge et rajoute un élément a la liste */
-	symb* temp=calloc(1,sizeof(symb));
+	symb* temp=calloc(1,sizeof(*temp));
 	temp->lex=*((lexeme*)p->val);
 	temp->deca=d[t];
 	temp->section=t;
@@ -345,7 +345,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".data")==0){init_symb(t);} /* On repasse a l'état INIT */
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".space")==0 && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){ /* On vérifie qu'il y est bien au moins un argument */
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){ /* On vérifie qu'il y est bien au moins un argument */
 							ajout_liste(bss_l,p,t->section,d); /* On ajoute le .space à la collection */
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while ((current_l-temp->nl && !liste_vide(p))==0){
@@ -405,7 +405,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".bss")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".word")==0  && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA || (((lexeme*)p->suiv->val)->typ==SYMBOLE && ((lexeme*)p->suiv->val)->nl==current_l)){
 						ajout_liste(data_l,p,t->section,d);
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 						while (current_l-temp->nl==0  && !liste_vide(p)){
