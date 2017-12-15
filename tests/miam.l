@@ -1,3 +1,4 @@
+<<<<<<< HEAD
   1                   # TEST_RETURN_CODE=PASS
   2                   # allons au ru
   3                   
@@ -31,3 +32,16 @@
  18	[UNDEFINED]    viteviteauru
  21	.data:00000000 lunchtime
  25	.data:00000004 menu
+=======
+00000000 3C010000     Lw $t0 , lunchtime
+00000004 8C280000 
+00000008 8CE6FE00     LW $6, -0x200($7)
+0000000C 20090008     ADDI $t1,$zero,8
+00000010 11090004     BEQ $t0 , $t1 , byebye
+00000014 00000000     NOP
+00000018 21290001     addi $t1 , $t1 , 1
+0000001C 08000004     J boucle 
+00000020 00000000     NOP
+00000024 0C000000     JAL viteviteauru
+00000000 0000000C lunchtime: .word 12
+>>>>>>> 6906d822d7ac745351f669e7c49e945346fa13e0
