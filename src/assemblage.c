@@ -206,7 +206,7 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
         ((assembl*)temp_ass->val)->typ_aff = 0;
         }
       }
-/*
+
       if(strcmp(((instruction*)temp->val)->inst->lex.tok,".byte")) {
         compteur = 0;
         for(num_op=0;num_op<((instruction*)temp->val)->inst_def.nb_op;num_op++) {
@@ -217,15 +217,14 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
           else {
             temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
             ((assembl*)temp_ass->val)->code_ligne |= ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << 6;
-            compteur=0;
+            compteur = 0;
           }
         ((assembl*)temp_ass->val)->typ_aff = 2* compteur;
         }
       }
-      */
 
       if(strcmp(((instruction*)temp->val)->inst->lex.tok,".asciiz")) {
-
+        
       }
 
       if(strcmp(((instruction*)temp->val)->inst->lex.tok,".space")) {
