@@ -3,8 +3,9 @@
 .text
     Lw $t0 , lunchtime
     LW $6, -0x200($7)
-    ADDI $t1,$zero,8
+    ADDI $t1,$zero, 6554
 boucle:
+  ROTR $t1 , $t2 , 31
     BEQ $t0 , $t1 , byebye
     NOP
     addi $t1 , $t1 , 1
@@ -13,6 +14,12 @@ boucle:
 byebye:
     JAL viteviteauru
 .data
-lunchtime : .word 12
-.byte 0xAA, 0xBB, 0xCC
+lunchtime : .word 12 , 3 , 24
+.byte 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF
+.byte 0xAA
+.space 2
 .asciiz "blabla"
+.space 12
+.bss
+.space 12
+#bla

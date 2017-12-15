@@ -17,31 +17,31 @@ void affiche_assembl(void* e) {
     printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 10){
-    printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X 0000...  %s\n", ((assembl*)e)->decalage, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 1){
-    printf("%08X %1X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 2){
-    printf("%08X %2X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %2X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)), ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 3){
-    printf("%08X %3X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %02X       %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 4){
-    printf("%08X %4X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %4X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)), ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 5){
-    printf("%08X %5X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %04X     %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 6){
-    printf("%08X %6X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %6X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)), ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 7){
-    printf("%08X %7X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 8){
-    printf("%08X %8X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
+    printf("%08X %8X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)), ((assembl*)e)->ligne);
   }
 }
 
@@ -65,7 +65,7 @@ int valeur_registre(char* mot, char** tab) {
 assembl* init_assembl(char* line, int line_num) {
   assembl* a = calloc(1,sizeof(*a));
   if(a==NULL) {printf("Erreur allocation ligne d'assemblage"); return NULL;}
-  a->ligne = calloc(1,sizeof(char)*strlen(line));
+  a->ligne = calloc(1,sizeof(char)*strlen(line)+1);
   strcpy(a->ligne,line);
   a->num_ligne = line_num;
   a->typ_aff = 9;
@@ -148,7 +148,7 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
           switch(((instruction*)temp->val)->Operande[num_op].ope_typ){
             case ETI:
               etiqu = rech_mot_symb(((instruction*)temp->val)->Operande[num_op].ope_val->eti,symb_t);
-              if(!strcmp(((instruction*)temp->val)->inst->lex.tok,"LW")) {
+              if(!strcmp(((instruction*)temp->val)->inst->lex.tok,"LW") || !strcmp(((instruction*)temp->val)->inst->lex.tok,"SW")) {
                 code = (unsigned long) 0x0000FFFF && (unsigned long) etiqu->deca;
               }
               if(!strcmp(((instruction*)temp->val)->inst->lex.tok,"LUI")) {
@@ -194,6 +194,7 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
               ((assembl*)temp_ass->val)->code_ligne = etiqu->deca;
             }
             else ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd;
+            ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca;
           }
           else {
             temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
@@ -202,44 +203,85 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
               ((assembl*)temp_ass->val)->code_ligne = etiqu->deca;
             }
             else((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd;
+            ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca+num_op*4;
           }
         ((assembl*)temp_ass->val)->typ_aff = 0;
         }
       }
 
-      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".byte")) {
+      if(!strcmp(((instruction*)temp->val)->inst->lex.tok,".byte")) {
         compteur = 0;
         for(num_op=0;num_op<((instruction*)temp->val)->inst_def.nb_op;num_op++) {
           if(num_op%4) {
-            ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << (6-2*compteur);
+            ((assembl*)temp_ass->val)->code_ligne |= ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << 4*(4-2*compteur);
             compteur += 1;
           }
           else {
-            temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
-            ((assembl*)temp_ass->val)->code_ligne |= ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << 6;
+            if(num_op!=0) {
+              temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
+              ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << 24;
+              compteur = 0;
+              ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca+4;
+            }
+            else {
+            ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << 24;
             compteur = 0;
+            ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca;
+            }
           }
-        ((assembl*)temp_ass->val)->typ_aff = 2* compteur;
+          ((assembl*)temp_ass->val)->typ_aff = 2* (compteur+1);
         }
       }
 
-      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".asciiz")) {
-        
-      }
+/*      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".asciiz")) {
+        compteur = 0;
+        for(num_op=0;num_op<((instruction*)temp->val)->inst_def.nb_op;num_op++) {
+          for(j=0;j<strlen(((instruction*)temp->val)->Operande[num_op].ope_val->chaine);j++) {
+            if(j%4) {
+              ((assembl*)temp_ass->val)->code_ligne |= ((instruction*)temp->val)->Operande[num_op].ope_val->chaine[j] << 4*(4-2*compteur);
+              printf("%08x\n", ((assembl*)temp_ass->val)->code_ligne);
+              compteur += 1;
+            }
+            else {
+              if(j!=0) {
+                temp_ass = inserer_element((void*)init_assembl("",i),temp_ass);
+                ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->chaine[j] << 24;
+                compteur = 0;
+                ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca+4;
+              }
+              else {
+              ((assembl*)temp_ass->val)->code_ligne = ((instruction*)temp->val)->Operande[num_op].ope_val->wrd << 24;
+              compteur = 0;
+              ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca;
+              }
+            }
+            ((assembl*)temp_ass->val)->typ_aff = 2* (compteur+1);
+            printf("%0d\n", ((assembl*)temp_ass->val)->typ_aff);
+          }
+        }
+      }*/
 
-      if(strcmp(((instruction*)temp->val)->inst->lex.tok,".space")) {
-
+      if(!strcmp(((instruction*)temp->val)->inst->lex.tok,".space")) {
+        ((assembl*)temp_ass->val)->code_ligne = 0;
+        if(((instruction*)temp->val)->Operande[0].ope_val->wrd >= 3) {
+          ((assembl*)temp_ass->val)->typ_aff=10;
+        }
+        else ((assembl*)temp_ass->val)->typ_aff=2*(((instruction*)temp->val)->Operande[0].ope_val->wrd+1) - 1;
+        ((assembl*)temp_ass->val)->decalage = ((instruction*)temp->val)->inst->deca;
       }
     }
 
     temp = chercher_ligne_bss(i,col_bss);
     if(!liste_vide(temp)){
-
+      temp_ass = chercher_ligne_ass(i,assembl_l);
+      ((assembl*)temp_ass->val)->code_ligne = 0;
+      printf("%d",atoi(((symb*)temp->suiv->val)->lex.tok));
+      if(atoi(((symb*)temp->suiv->val)->lex.tok) >= 3) {
+        ((assembl*)temp_ass->val)->typ_aff=10;
+      }
+      else ((assembl*)temp_ass->val)->typ_aff=2*(atoi(((symb*)temp->suiv->val)->lex.tok)+1) - 1;
+      ((assembl*)temp_ass->val)->decalage = ((symb*)temp->val)->deca;
     }
-    else {
-
-    }
-
   }
   return ;
 }

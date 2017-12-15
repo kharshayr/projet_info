@@ -21,7 +21,7 @@ void affiche_liste_ope_text(Liste arg_text){
     while(!liste_vide(p)){
 	i=0;
 	inst=p->val;
-	while (i<inst->inst_def.nb_op && !liste_vide(p)){
+	while ((i<inst->inst_def.nb_op) && !liste_vide(p)){
 		if(inst->Operande[i].ope_typ==IMD){
 			printf("Opérande %hd instruction %s ligne %d\n",inst->Operande[i].ope_val->imd,inst->inst->lex.tok,inst->inst->lex.nl);}
 		else if(inst->Operande[i].ope_typ==REG){
@@ -37,14 +37,18 @@ void affiche_liste_ope_data(Liste arg_data){
     printf("\n-------------------------Collection Operande data-----------------------------\n");
     Liste p=arg_data;
     instruction* inst;
+    int i;
     while(!liste_vide(p)){
 	inst=p->val;
-	if(inst->Operande->ope_typ==WRD){
-		printf("Opérande %lu instruction %s ligne %d\n",inst->Operande->ope_val->wrd,inst->inst->lex.tok,inst->inst->lex.nl);}
-	else if(inst->Operande->ope_typ==CHN){
-		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->chaine,inst->inst->lex.tok,inst->inst->lex.nl);}
-	else if(inst->Operande->ope_typ==ETI){
-		printf("Opérande %s instruction %s ligne %d\n",inst->Operande->ope_val->eti,inst->inst->lex.tok,inst->inst->lex.nl);}
+	i=0;
+	while (i<inst->inst_def.nb_op){
+		if(inst->Operande->ope_typ==WRD){
+			printf("Opérande %lu instruction %s ligne %d \n",inst->Operande[i].ope_val->wrd,inst->inst->lex.tok,inst->inst->lex.nl);}
+		else if(inst->Operande->ope_typ==CHN){
+			printf("Opérande %s instruction %s ligne %d\n",inst->Operande[i].ope_val->chaine,inst->inst->lex.tok,inst->inst->lex.nl);}
+		else if(inst->Operande->ope_typ==ETI){
+			printf("Opérande %s instruction %s ligne %d\n",inst->Operande[i].ope_val->eti,inst->inst->lex.tok,inst->inst->lex.nl);}
+		i++;}
 	p=p->suiv;}}
 
 char* rech_mot(char* mot, char** tab){
@@ -65,6 +69,7 @@ symb* rech_mot_symb(char* mot, symb* tab){
 Liste verif_arg_data(Liste* data_l){
 	Liste list_instr=creer_liste();
 	Liste p=*data_l;
+	Liste q=p;
 	if (liste_vide(p)){
 		printf("Pas d'instruction dans text ! \n");
 		return list_instr;}
@@ -73,15 +78,21 @@ Liste verif_arg_data(Liste* data_l){
 	instruction* instr;
 	int i;
 	while(!liste_vide(p)){
-		i=0;
 		instr=calloc(1,sizeof(instruction));
 		switch (temp->lex.typ){
 			case DIRECTIVE:
 				current_inst=temp;
 				p=p->suiv;if (!liste_vide(p)){temp=p->val;}
+				i=0;
+				q=p;
+				while (!liste_vide(q) && temp->lex.typ!=DIRECTIVE){
+					i++;
+					q=q->suiv;if (!liste_vide(q)){temp=q->val;}}
+				instr->Operande=calloc(i,sizeof(opestruct));
+				instr->inst=current_inst;
+				i=0;
+				if (!liste_vide(p)){temp=p->val;}
 				while (temp->lex.typ!=DIRECTIVE && !liste_vide(p)){
-					instr->Operande=calloc(1,sizeof(opestruct));
-					instr->inst=current_inst;
 					switch(temp->lex.typ){
 						case SYMBOLE:
 							instr->Operande[i].ope_val=calloc(1,sizeof(char*));
@@ -161,7 +172,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 								case VIRGULE:
 									break;
 								case DECIMAL:
-									if (nb_op==1 && strcmp(arg,"SA")==0){;}
+									if (nb_op==1 && strcmp(arg,"SA")==0 && atof(temp->lex.tok)>=0 && atof(temp->lex.tok)<=31){;}
 									else if (nb_op>1 && strcmp(arg,"SA")==0){
 										printf("Shift ammount pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
 										current_inst->lex.typ=ERREUR;
@@ -225,7 +236,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 								case VIRGULE:
 									break;
 								case DECIMAL:
-									if (nb_op==1 && (strcmp(arg,"I")==0 || strcmp(arg,"REL")==0)){;}
+									if (nb_op==1 && (strcmp(arg,"I")==0 || strcmp(arg,"REL")==0) && atof(temp->lex.tok)>=0 && atof(temp->lex.tok)<=65535){;}
 									else if (nb_op>1){
 										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
 										current_inst->lex.typ=ERREUR;
