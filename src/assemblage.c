@@ -65,7 +65,7 @@ int valeur_registre(char* mot, char** tab) {
 assembl* init_assembl(char* line, int line_num) {
   assembl* a = calloc(1,sizeof(*a));
   if(a==NULL) {printf("Erreur allocation ligne d'assemblage"); return NULL;}
-  a->ligne = calloc(1,sizeof(char)*strlen(line));
+  a->ligne = calloc(1,sizeof(char)*strlen(line)+1);
   strcpy(a->ligne,line);
   a->num_ligne = line_num;
   a->typ_aff = 9;

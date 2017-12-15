@@ -249,7 +249,7 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									break;
 								case OFFSETBASE:
 									if (nb_op==2 && strcmp(arg,"OFB")==0){
-										Liste q=p->suiv,r=calloc(1,sizeof(Liste));
+										Liste q=p->suiv,r=calloc(1,sizeof(*r));
 										p->suiv=r;
 										r->suiv=q;
 										int i=0,j=0;
@@ -373,6 +373,14 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 								case VIRGULE:
 									break;
 								case DECIMAL:
+									if (strcmp(arg,"REL")==0 && (atol(temp->lex.tok)<=-262143 || atol(temp->lex.tok)>=262143)){
+										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
+										current_inst->lex.typ=ERREUR;
+										temp->lex.typ=ERREUR;}
+									else if (strcmp(arg,"ABS")==0 && (atof(temp->lex.tok)<=0 || atof(temp->lex.tok)>=67108863)){
+										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
+										current_inst->lex.typ=ERREUR;
+										temp->lex.typ=ERREUR;}
 									nb_op=nb_op-1;
 									break;
 								default:

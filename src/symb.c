@@ -17,15 +17,15 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("SLL"); /* On remplace NOP par SLL */
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $0 */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("0");temp->typ=DECIMAL;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On referme la chaine */
 		return p_memo;}
@@ -47,7 +47,7 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return p_memo;}
@@ -68,7 +68,7 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return p_memo;}
@@ -89,7 +89,7 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $zero */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return p_memo;}
@@ -98,7 +98,7 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("SLT"); /* On remplace le token BLT par SLT */
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl; /* On créé le lexeme suivant */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On repointe vers le premier registre */
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){ /* If évaluant la validité des types des arguments donnés */
@@ -123,20 +123,20 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p_pts=p;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("BNE");temp->typ=SYMBOLE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On referme la chaine */
 		return p_pts;}
@@ -148,31 +148,31 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("LUI"); /* On remplace le token LW par LUI*/
 		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
 		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp; /* On ajoute le maillon a la chaine */
 		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p_pts=p;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("LW");temp->typ=SYMBOLE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_reg; /* Prochain lexeme sera le registre */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
-		temp=calloc(1,sizeof(lexeme));
-		temp->tok=calloc(1,sizeof(char*));
+		temp=calloc(1,sizeof(*temp));
+		temp->tok=calloc(512,sizeof(char*));
 		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
 		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
 		temp->typ=OFFSETBASE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_next; /* On referme la chaine */
 		return p_pts;}}}
@@ -184,31 +184,31 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("LUI"); /* On remplace le token SW par LUI*/
 		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
 		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp; /* On ajoute le maillon a la chaine */
 		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p_pts=p;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("SW");temp->typ=SYMBOLE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_reg; /* Prochain lexeme sera le registre */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=calloc(1,sizeof(char*));
+		temp->tok=calloc(512,sizeof(char*));
 		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
 		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
 		temp->typ=OFFSETBASE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		p->suiv=p_next; /* On referme la chaine */
