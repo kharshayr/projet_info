@@ -9,7 +9,7 @@
 #include <verif.h>
 
 void affiche_assembl(void* e) {
-  printf("%2i ", ((assembl*)e)->num_ligne);
+  printf("%3i ", ((assembl*)e)->num_ligne);
   if(((assembl*)e)->typ_aff==9){
     printf("\t\t     %s\n",((assembl*)e)->ligne);
   }

@@ -12,17 +12,17 @@ char * strdup(const char *str){
 void ecrire_tabl_symb(FILE* fichier, symb* s, unsigned int nlines) {
   fprintf(fichier,"\n.symtab\n"); printf("\n.symtab\n");
   int i,j;
-  char* mesval[] = {".bss ", ".data", ".text", " ", "[UNDEFINED]    "};
+  char* mesval[] = {".bss ", ".data", ".text", " ", "[UNDEFINED]"};
   for(i=0;i<nlines;i++) {
     for(j=0;j<N;j++) {
       if((s+j)->lex.tok != NULL && s[j].lex.nl==i){
         if(s[j].section == undefined) {
-          printf("%3d\t%s%s\n", s[j].lex.nl, mesval[s[j].section], s[j].lex.tok);
-          fprintf(fichier,"%3d\t%s%s\n", s[j].lex.nl, mesval[s[j].section], s[j].lex.tok);
+          printf("%3d\t%s   %s\n", s[j].lex.nl, mesval[s[j].section], s[j].lex.tok);
+          fprintf(fichier,"%3d\t%s   %s\n", s[j].lex.nl, mesval[s[j].section], s[j].lex.tok);
         }
         else {
-          printf("%3d\t%s:%08x %s\n", s[j].lex.nl, mesval[s[j].section], s[j].deca, s[j].lex.tok);
-          fprintf(fichier,"%3d\t%s:%08x %s\n", s[j].lex.nl, mesval[s[j].section], s[j].deca, s[j].lex.tok);
+          printf("%3d\t%s:%08x  %s\n", s[j].lex.nl, mesval[s[j].section], s[j].deca, s[j].lex.tok);
+          fprintf(fichier,"%3d\t%s:%08x  %s\n", s[j].lex.nl, mesval[s[j].section], s[j].deca, s[j].lex.tok);
         }
       }
     }
