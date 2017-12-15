@@ -347,7 +347,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp((temp->tok),".space")==0 && !liste_vide(p->suiv)){
 						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){
-							ajout_liste(data_l,p,t->section,d);
+							ajout_liste(bss_l,p,t->section,d);
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while (current_l-temp->nl==0  && !liste_vide(p)){
 								switch(temp->typ){
@@ -363,8 +363,8 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 										break;
 									case DECIMAL:
 										if (atof(temp->tok)<=4294967295 && atof(temp->tok)>=0){
-											ajout_liste(data_l,p,t->section,d);
-											d[data]=d[data]+atoi(temp->tok);}
+											ajout_liste(bss_l,p,t->section,d);
+											d[bss]=d[bss]+atoi(temp->tok);}
 										else{
 											printf("Argument %s ligne %d out of range \n",temp->tok,temp->nl);
 											temp->typ=ERREUR;exit( EXIT_FAILURE );}
