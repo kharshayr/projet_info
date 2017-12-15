@@ -9,4 +9,3 @@
 00000020 00000000     NOP
 00000024 0C000000     JAL viteviteauru
 00000000 0000000C lunchtime: .word 12
-00000000 00000000 .word menu

@@ -158,15 +158,15 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									if(mnemo!=NULL){
 										temp->lex.tok=mnemo;}
 									else{
-										printf("Nom de registre inconnu pour %s \n",temp->lex.tok);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										printf("Nom de registre inconnu pour %s ligne %d \n",temp->lex.tok,temp->lex.nl);
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									if (nb_op>1){;}
 									else if (nb_op==1 && strcmp(arg,"R")==0){;}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								case VIRGULE:
@@ -175,17 +175,18 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									if (nb_op==1 && strcmp(arg,"SA")==0 && atof(temp->lex.tok)>=0 && atof(temp->lex.tok)<=31){;}
 									else if (nb_op>1 && strcmp(arg,"SA")==0){
 										printf("Shift ammount pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								default:
-									temp->lex.typ=ERREUR;
-									current_inst->lex.typ=ERREUR;
+									printf("Type argument %s ligne %d invalide \n",temp->lex.tok,temp->lex.nl);
+									temp->lex.typ=ERREUR;exit( EXIT_FAILURE );
+									current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
 									nb_op=nb_op-1;
 									break;}
 							p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
@@ -214,7 +215,8 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 								q=q->suiv;if(!liste_vide(q)){temp=q->val;}}
 							list_instr=ajout_queue(instr,list_instr);}
 						else{
-							current_inst->lex.typ=ERREUR;}}
+							printf("Nombre arguments invalide pour %s ligne %d \n",current_inst->lex.tok,current_inst->lex.nl);
+							current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );}}
 					else if (type=='I'){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p) && nb_op!=0){
 							switch (temp->lex.typ){
@@ -223,14 +225,14 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									if(mnemo!=NULL){
 										temp->lex.tok=mnemo;}
 									else{
-										printf("Nom de registre inconnu pour %s \n",temp->lex.tok);
-										temp->lex.typ=ERREUR;
-										current_inst->lex.typ=ERREUR;}
+										printf("Nom de registre inconnu pour %s ligne %d \n",temp->lex.tok,temp->lex.nl);
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									if (nb_op>1){;}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								case VIRGULE:
@@ -239,12 +241,12 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									if (nb_op==1 && (strcmp(arg,"I")==0 || strcmp(arg,"REL")==0) && atof(temp->lex.tok)>=0 && atof(temp->lex.tok)<=65535){;}
 									else if (nb_op>1){
 										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								case OFFSETBASE:
@@ -268,8 +270,8 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 											nb_op=nb_op-1;}
 										else{
 											printf("Nom de registre inconnu pour %s \n",((symb*)p->suiv->val)->lex.tok);
-											temp->lex.typ=ERREUR;
-											current_inst->lex.typ=ERREUR;}
+											temp->lex.typ=ERREUR;exit( EXIT_FAILURE );
+											current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 										temp->lex.tok[i]='\0';
 										i=to_decimal(temp->lex.tok);
 										if (i==0){
@@ -279,12 +281,12 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 										p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
 									else if (nb_op>1){
 										printf("Offset base pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								case SYMBOLE:
@@ -295,17 +297,18 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									if (nb_op==1 && (strcmp(arg,"I")==0 || strcmp(arg,"REL")==0)){;}
 									else if (nb_op>1){
 										printf("Immediate pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);printf("%s \n",temp->lex.tok);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								default:
-									current_inst->lex.typ=ERREUR;
-									temp->lex.typ=ERREUR;
+									printf("Type argument %s ligne %d invalide \n",temp->lex.tok,temp->lex.nl);
+									current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+									temp->lex.typ=ERREUR;exit( EXIT_FAILURE );
 									nb_op=nb_op-1;
 									break;}
 							p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
@@ -339,7 +342,8 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 								q=q->suiv;if(!liste_vide(q)){temp=q->val;}}
 							list_instr=ajout_queue(instr,list_instr);}
 						else{
-							current_inst->lex.typ=ERREUR;}}
+							printf("Nombre d'arguments invalide pour %s ligne %d \n",temp->lex.tok,temp->lex.nl);
+							current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );}}
 					else if (type=='J'){
 						while (current_nl-temp->lex.nl==0 && !liste_vide(p) && nb_op!=0){
 							switch (temp->lex.typ){
@@ -349,13 +353,13 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 										temp->lex.tok=mnemo;}
 									else{
 										printf("Nom de registre inconnu pour %s \n",temp->lex.tok);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									if (nb_op>1){;}
 									else{
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								case SYMBOLE:
@@ -366,8 +370,8 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 									if (nb_op==1){;}
 									else{
 										printf("Etiquette pas a la bonne place dans le %s ligne %d \n",dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								case VIRGULE:
@@ -375,17 +379,18 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 								case DECIMAL:
 									if (strcmp(arg,"REL")==0 && (atol(temp->lex.tok)<=-262143 || atol(temp->lex.tok)>=262143)){
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									else if (strcmp(arg,"ABS")==0 && (atof(temp->lex.tok)<=0 || atof(temp->lex.tok)>=67108863)){
 										printf("Argument %s invalide dans le %s ligne %d \n",temp->lex.tok,dico[index_dico].symbole,current_nl);
-										current_inst->lex.typ=ERREUR;
-										temp->lex.typ=ERREUR;}
+										current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+										temp->lex.typ=ERREUR;exit( EXIT_FAILURE );}
 									nb_op=nb_op-1;
 									break;
 								default:
-									current_inst->lex.typ=ERREUR;
-									temp->lex.typ=ERREUR;
+									printf("Type argument %s ligne %d invalide \n",temp->lex.tok,temp->lex.nl);
+									current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
+									temp->lex.typ=ERREUR;exit( EXIT_FAILURE );
 									nb_op=nb_op-1;
 									break;}
 							p=p->suiv;if(!liste_vide(p)){temp=p->val;}}
@@ -419,14 +424,15 @@ Liste verif_arg_text(Liste* text_l,inst_def_t* dico, int taille, symb* tab){
 								q=q->suiv;if(!liste_vide(q)){temp=q->val;}}
 							list_instr=ajout_queue(instr,list_instr);}
 						else{
-							current_inst->lex.typ=ERREUR;}}}
+							printf("Nombre d'arguments invalide pour %s ligne %d \n",temp->lex.tok,temp->lex.nl);
+							current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );}}}
 				else{
-					current_inst->lex.typ=ERREUR;
+					current_inst->lex.typ=ERREUR;exit( EXIT_FAILURE );
 					while (current_nl-temp->lex.nl==0 && !liste_vide(p)){
 						p=p->suiv;if(!liste_vide(p)){temp=p->val;}}}
 				break;
 			default:
-				temp->lex.typ=ERREUR;
+				temp->lex.typ=ERREUR;exit( EXIT_FAILURE );
 				p=p->suiv;if(!liste_vide(p)){temp=p->val;}
 				break;}}
 	return list_instr;}

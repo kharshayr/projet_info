@@ -1,10 +1,9 @@
 # TEST_RETURN_CODE=PASS
 # allons au ru
 
-
 .set noreorder
 .text
-    Lw $t0 , lunchtime
+    Lw $t0 , $t1
     LW $6, -0x200($7)
     ADDI $t1,$zero,8
 
@@ -19,7 +18,6 @@ byebye:
 
 .data
 lunchtime: .word 12
-.word menu
-
-.bss 
-menu:.space 24
+.space 2
+.bss
+.space 24
