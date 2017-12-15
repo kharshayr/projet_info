@@ -70,7 +70,7 @@ int main ( int argc, char *argv[] ) {
 
 
     if ( NULL == file ) {
-        fprintf( stderr, "Missing ASM source file, aborting.\n" );
+        fprintf(stderr, "Missing ASM source file, aborting.\n" );
         exit( EXIT_FAILURE );
     }
 
@@ -122,8 +122,21 @@ int main ( int argc, char *argv[] ) {
     printf("\nListe d'assemblage : \n\n");
     calcul_code_assemblage(arg_text, arg_data, *bss_l, origine_l, &nlines, s);
     visualiser_liste(*origine_l,&affiche_assembl);
-    
 
+    char* f_racine=argv[1];
+    char* q=f_racine;
+    while (strcmp(q,".s")!=0){
+	q++;}
+    strcpy(q,".l");
+    Liste p=*origine_l;
+    FILE *fichier;
+    fichier = fopen(f_racine,"w");
+    if (fichier != NULL){
+      ecrire_liste_assemblage(fichier, p);
+      ecrire_tabl_symb(fichier, s, nlines);
+    }
+
+   fclose(fichier);
 
     /* On libère */
     free(tab);

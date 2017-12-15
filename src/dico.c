@@ -23,8 +23,8 @@ void strtoupper(char* str){
 inst_def_t * lect_dico_int(char* nomFichierDico, int* p_nb_inst) {
  FILE *f1;
  int i,j;
- char* s1=malloc(512); if(s1==NULL){return NULL;}
- char* s2=malloc(512); if(s2==NULL){return NULL;}
+ char* s1=malloc(512);
+ char* s2=malloc(512);
  char bs[32];
  inst_def_t * tab;
  f1=fopen(nomFichierDico,"r");
@@ -66,10 +66,8 @@ inst_def_t * lect_dico_int(char* nomFichierDico, int* p_nb_inst) {
    }
    tab[i].poidsBits=tab_poids;
 
-   tab[i].symbole=s1;
-   tab[i].arg=s2;
-   s1=malloc(512);
-   s2=malloc(512);
+   tab[i].symbole=strdup(s1);
+   tab[i].arg=strdup(s2);
  }
  fclose(f1);
  return tab;

@@ -19,6 +19,7 @@ typedef struct sym{
 	sect section;                           /* Section dans laquelle on est*/
 	int deca;} symb;                        /* Décalage en octets*/
 
+void ecrire_tabl_symb(FILE*, symb*, unsigned int );
 void ajout_liste(Liste*, Liste, int, int*);
 void affiche_col(void*);
 void affiche_tab(symb*);

@@ -9,6 +9,27 @@ char * strdup(const char *str){
         strcpy(dup, str);}
     return dup;}
 
+void ecrire_tabl_symb(FILE* fichier, symb* s, unsigned int nlines) {
+  fprintf(fichier,"\n.symtab\n"); printf("\n.symtab\n");
+  int i,j;
+  char* mesval[] = {".bss ", ".data", ".text", " ", "[UNDEFINED]    "};
+  for(i=0;i<nlines;i++) {
+    for(j=0;j<N;j++) {
+      if((s+j)->lex.tok != NULL && s[j].lex.nl==i){
+        if(s[j].section == undefined) {
+          printf("%3d\t%s%s\n", s[j].lex.nl, mesval[s[j].section], s[j].lex.tok);
+          fprintf(fichier,"%3d\t%s%s\n", s[j].lex.nl, mesval[s[j].section], s[j].lex.tok);
+        }
+        else {
+          printf("%3d\t%s:%08x %s\n", s[j].lex.nl, mesval[s[j].section], s[j].deca, s[j].lex.tok);
+          fprintf(fichier,"%3d\t%s:%08x %s\n", s[j].lex.nl, mesval[s[j].section], s[j].deca, s[j].lex.tok);
+        }
+      }
+    }
+  }
+}
+
+
 Liste pseudo_instr(Liste p, int nl){
 	lexeme* temp=p->val;
 	strtoupper(temp->tok);
@@ -17,15 +38,15 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("SLL"); /* On remplace NOP par SLL */
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $0 */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$0");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("0");temp->typ=DECIMAL;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On referme la chaine */
 		return p_memo;}
@@ -47,7 +68,7 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return p_memo;}
@@ -68,7 +89,7 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return p_memo;}
@@ -89,7 +110,7 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl; /* On créé le token $zero */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo;
 		return p_memo;}
@@ -98,7 +119,7 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("SLT"); /* On remplace le token BLT par SLT */
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl; /* On créé le lexeme suivant */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On repointe vers le premier registre */
 		if (((lexeme*)(p->suiv->val))->typ==REGISTRE && !liste_vide(p->suiv)){ /* If évaluant la validité des types des arguments donnés */
@@ -123,20 +144,20 @@ Liste pseudo_instr(Liste p, int nl){
 			return p;}
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p_pts=p;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("BNE");temp->typ=SYMBOLE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$1");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("$zero");temp->typ=REGISTRE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_memo; /* On referme la chaine */
 		return p_pts;}
@@ -148,31 +169,31 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("LUI"); /* On remplace le token LW par LUI*/
 		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
 		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp; /* On ajoute le maillon a la chaine */
 		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p_pts=p;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("LW");temp->typ=SYMBOLE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_reg; /* Prochain lexeme sera le registre */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
-		temp=calloc(1,sizeof(lexeme));
-		temp->tok=calloc(1,sizeof(char*));
+		temp=calloc(1,sizeof(*temp));
+		temp->tok=calloc(512,sizeof(char*));
 		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
 		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
 		temp->typ=OFFSETBASE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_next; /* On referme la chaine */
 		return p_pts;}}}
@@ -184,31 +205,31 @@ Liste pseudo_instr(Liste p, int nl){
 		temp->tok=strdup("LUI"); /* On remplace le token SW par LUI*/
 		temp=calloc(1,sizeof(lexeme)); /* On créé le prochain token à écrire dans la liste */
 		temp->tok=strdup("$at");temp->typ=REGISTRE;temp->nl=nl; /* On remplis le token */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp; /* On ajoute le maillon a la chaine */
 		p->suiv=p_eti; /* Prochain lexeme sera etiquette */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(":");temp->typ=DEUX_PTS;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p_pts=p;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup("SW");temp->typ=SYMBOLE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		p->suiv=p_reg; /* Prochain lexeme sera le registre */
 		p=p->suiv;
 		temp=calloc(1,sizeof(lexeme));
 		temp->tok=strdup(",");temp->typ=VIRGULE;temp->nl=nl; /* On ajoute une virgule pour pas que LW repasse dans la boucle de pseudo instruction */
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
-		temp->tok=calloc(1,sizeof(char*));
+		temp->tok=calloc(512,sizeof(char*));
 		temp->tok=strcpy(temp->tok,((lexeme*)p_eti->val)->tok); /* On recopie l'étiquette fournie en argument en tant qu'offset */
 		temp->tok=strcat(temp->tok,"($at)"); /* On y rajoute la base */
 		temp->typ=OFFSETBASE;temp->nl=nl;
-		p->suiv=calloc(1,sizeof(Liste));
+		p->suiv=calloc(1,sizeof(*p));
 		p=p->suiv;p->val=temp;
 		temp=calloc(1,sizeof(lexeme));
 		p->suiv=p_next; /* On referme la chaine */
@@ -242,7 +263,7 @@ void affiche_erreurs_gram(Liste l){
 }
 
 void ajout_liste(Liste* l, Liste p,int t,int* d){ /* Fonction qui allonge et rajoute un élément a la liste */
-	symb* temp=calloc(1,sizeof(symb));
+	symb* temp=calloc(1,sizeof(*temp));
 	temp->lex=*((lexeme*)p->val);
 	temp->deca=d[t];
 	temp->section=t;
@@ -345,7 +366,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".data")==0){init_symb(t);} /* On repasse a l'état INIT */
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".space")==0 && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE){ /* On vérifie qu'il y est bien au moins un argument */
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){ /* On vérifie qu'il y est bien au moins un argument */
 							ajout_liste(bss_l,p,t->section,d); /* On ajoute le .space à la collection */
 							p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 							while ((current_l-temp->nl && !liste_vide(p))==0){
@@ -405,7 +426,7 @@ void tabl_symb(Liste l, symb* s, Liste* data_l, Liste* text_l, Liste* bss_l){
 					else if (strcmp(temp->tok,".bss")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".text")==0){init_symb(t);}
 					else if (strcmp(temp->tok,".word")==0  && !liste_vide(p->suiv)){
-						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA){
+						if(((lexeme*)p->suiv->val)->typ==DECIMAL || ((lexeme*)p->suiv->val)->typ==VIRGULE || ((lexeme*)p->suiv->val)->typ==HEXA || (((lexeme*)p->suiv->val)->typ==SYMBOLE && ((lexeme*)p->suiv->val)->nl==current_l)){
 						ajout_liste(data_l,p,t->section,d);
 						p=p->suiv;if (!liste_vide(p)){temp=p->val;}
 						while (current_l-temp->nl==0  && !liste_vide(p)){

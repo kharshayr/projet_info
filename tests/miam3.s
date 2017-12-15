@@ -1,4 +1,7 @@
+# TEST_RETURN_CODE=PASS
 # allons au ru
+
+
 .set noreorder
 .text
     Lw $t0 , lunchtime
@@ -6,7 +9,7 @@
     ADDI $t1,$zero, 6554
 boucle:
   ROTR $t1 , $t2 , 31
-    BEQ $t0 , $t1 , byebye
+    BEQ $t0 , $t1 , 821
     NOP
     addi $t1 , $t1 , 1
     J boucle

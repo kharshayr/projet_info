@@ -45,6 +45,46 @@ void affiche_assembl(void* e) {
   }
 }
 
+void ecrire_liste_assemblage(FILE* fichier, Liste p){
+  while (!liste_vide(p)){
+    fprintf(fichier,"%3i ", ((assembl*)p->val)->num_ligne);
+    if(((assembl*)p->val)->typ_aff==9){
+      fprintf(fichier,"                  %s\n",((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 0){
+      fprintf(fichier,"%08X %08X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 10){
+      fprintf(fichier,"%08X 0000...  %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 1){
+      fprintf(fichier,"%08X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 2){
+      fprintf(fichier,"%08X %2X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)), ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 3){
+      fprintf(fichier,"%08X %02X       %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 4){
+      fprintf(fichier,"%08X %4X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)), ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 5){
+      fprintf(fichier,"%08X %04X     %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 6){
+      fprintf(fichier,"%08X %6X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)), ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 7){
+      fprintf(fichier,"%08X %08X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);
+    }
+    else if(((assembl*)p->val)->typ_aff == 8){
+      fprintf(fichier,"%08X %8X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)), ((assembl*)p->val)->ligne);
+    }
+    p=p->suiv;
+  }
+}
+
 char* reg_mnemo2[] = {"$zero", "$0", "$at", "$1", "$v0", "$2", "$v1", "$3", "$a0", "$4", "$a1", "$5", "$a2", "$6", "$a3", "$7",
  "$t0", "$8", "$t1", "$9", "$t2", "$10", "$t3", "$11", "$t4", "$12", "$t5", "$13", "$t6", "$14", "$t7", "$15", "$s0",
   "$16", "$s1", "$17", "$s2", "$18", "$s3", "$19", "$s4", "$20", "$s5", "$21", "$s6", "$22", "$s7", "$23", "$t8",
@@ -95,7 +135,6 @@ Liste chercher_ligne_bss(int num_ligne, Liste col){
   }
   while(!liste_vide(p_col->suiv)) {
     p_col=p_col->suiv;
-    printf("%i",((symb*)p_col->val)->lex.nl);
     if(((symb*)p_col->val)->lex.nl==num_ligne){
       return p_col;
     }
@@ -275,7 +314,6 @@ void calcul_code_assemblage(Liste col_text, Liste col_data, Liste col_bss, Liste
     if(!liste_vide(temp)){
       temp_ass = chercher_ligne_ass(i,assembl_l);
       ((assembl*)temp_ass->val)->code_ligne = 0;
-      printf("%d",atoi(((symb*)temp->suiv->val)->lex.tok));
       if(atoi(((symb*)temp->suiv->val)->lex.tok) >= 3) {
         ((assembl*)temp_ass->val)->typ_aff=10;
       }

@@ -18,11 +18,12 @@ typedef struct assembl_s {
   ..
   8 :
   9 : code non visible
-  10 : .. pour .space 
+  10 : .. pour .space
   */
 } assembl;
 
 void affiche_assembl(void* );
+void ecrire_liste_assemblage(FILE* fichier, Liste p);
 int valeur_registre(char*, char**);
 assembl* init_assembl(char*, int);
 Liste chercher_ligne_col(int , Liste );

@@ -4,17 +4,23 @@
 
 .set noreorder
 .text
-ADDI $t1,$t2, -3
- SW $t4 , boucle
-    NEG $t2 , $t2
-    ADDI $t1, $t2, 0x200
-byebye :
-	BLT $t1 , $t2 , boucle
-	NOP
-	JAL boucle
-lunchtime:
- LW $t4 , toucle
+    Lw $t0 , lunchtime
+    LW $6, -0x200($7)
+    ADDI $t1,$zero,8
+
+boucle:
+    BEQ $t0 , $t1 , byebye
+    NOP
+    addi $t1 , $t1 , 1
+    J boucle 
+    NOP
+byebye:
+    JAL viteviteauru
+
 .data
-.word 12,boucle,12
-.asciiz "bl       a::          bla "
-.word 12
+lunchtime: .word 12
+.word menu
+
+.bss 
+menu:.space 24
+#fin
