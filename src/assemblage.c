@@ -23,19 +23,19 @@ void affiche_assembl(void* e) {
     printf("%08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 2){
-    printf("%08X %2X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)), ((assembl*)e)->ligne);
+    printf("%08X %2X       %s\n", ((assembl*)e)->decalage, (0x000000FF & (((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)))), ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 3){
     printf("%08X %02X       %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 4){
-    printf("%08X %4X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)), ((assembl*)e)->ligne);
+    printf("%08X %4X     %s\n", ((assembl*)e)->decalage, (0x0000FFFF & (((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)))), ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 5){
     printf("%08X %04X     %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 6){
-    printf("%08X %6X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)), ((assembl*)e)->ligne);
+    printf("%08X %6X %s\n", ((assembl*)e)->decalage, (0x00FFFFFF & (((assembl*)e)->code_ligne >> (4*(8- ((assembl*)e)->typ_aff)))), ((assembl*)e)->ligne);
   }
   else if(((assembl*)e)->typ_aff == 7){
     printf("%08X %08X %s\n", ((assembl*)e)->decalage, ((assembl*)e)->code_ligne, ((assembl*)e)->ligne);
@@ -61,19 +61,19 @@ void ecrire_liste_assemblage(FILE* fichier, Liste p){
       fprintf(fichier,"%08X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->ligne);
     }
     else if(((assembl*)p->val)->typ_aff == 2){
-      fprintf(fichier,"%08X %2X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)), ((assembl*)p->val)->ligne);
+      fprintf(fichier,"%08X %2X       %s\n", ((assembl*)p->val)->decalage, (0x000000FF & (((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)))), ((assembl*)p->val)->ligne);
     }
     else if(((assembl*)p->val)->typ_aff == 3){
       fprintf(fichier,"%08X %02X       %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);
     }
     else if(((assembl*)p->val)->typ_aff == 4){
-      fprintf(fichier,"%08X %4X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)), ((assembl*)p->val)->ligne);
+      fprintf(fichier,"%08X %4X     %s\n", ((assembl*)p->val)->decalage, (0x0000FFFF & (((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)))), ((assembl*)p->val)->ligne);
     }
     else if(((assembl*)p->val)->typ_aff == 5){
       fprintf(fichier,"%08X %04X     %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);
     }
     else if(((assembl*)p->val)->typ_aff == 6){
-      fprintf(fichier,"%08X %6X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)), ((assembl*)p->val)->ligne);
+      fprintf(fichier,"%08X %6X %s\n", ((assembl*)p->val)->decalage, (0x00FFFFFF & (((assembl*)p->val)->code_ligne >> (4*(8- ((assembl*)p->val)->typ_aff)))), ((assembl*)p->val)->ligne);
     }
     else if(((assembl*)p->val)->typ_aff == 7){
       fprintf(fichier,"%08X %08X %s\n", ((assembl*)p->val)->decalage, ((assembl*)p->val)->code_ligne, ((assembl*)p->val)->ligne);

@@ -116,7 +116,6 @@ int main ( int argc, char *argv[] ) {
     affiche_liste_ope_data(arg_data);
 
     Liste reloc_t_text = creer_table_reloc(arg_text,s);
-    visualiser_liste(reloc_t_text,&affiche_reloc);
     Liste reloc_t_data = creer_table_reloc(arg_data,s);
 
     printf("\nListe d'assemblage : \n\n");
@@ -133,7 +132,18 @@ int main ( int argc, char *argv[] ) {
     fichier = fopen(f_racine,"w");
     if (fichier != NULL){
       ecrire_liste_assemblage(fichier, p);
+
       ecrire_tabl_symb(fichier, s, nlines);
+
+      printf("\nrel.text\n");
+      visualiser_liste(reloc_t_text,&affiche_reloc);
+      fprintf(fichier, "\nrel.text\n");
+      ecrire_liste_reloc(fichier, reloc_t_text);
+
+      printf("\nrel.data\n");
+      visualiser_liste(reloc_t_data,&affiche_reloc);
+      fprintf(fichier, "\nrel.data\n");
+      ecrire_liste_reloc(fichier, reloc_t_data);
     }
 
    fclose(fichier);

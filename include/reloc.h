@@ -16,6 +16,7 @@ typedef struct reloc_s {
 } reloc;
 
 void affiche_reloc(void*);
+void ecrire_liste_reloc(FILE* , Liste );
 reloc* init_entree_reloc(instruction*, int, symb*);
 Liste creer_table_reloc(Liste, symb*);
 

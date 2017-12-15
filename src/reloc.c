@@ -11,7 +11,7 @@
 
 void affiche_reloc(void* e) {
     static char* mesval[] = {"R_MIPS_32", "R_MIPS_26", "R_MIPS_LO16", "R_MIPS_HI16"};
-    static char* mesval2[] = {".bss", ".data", ".text", " ", " "};
+    static char* mesval2[] = {".bss ", ".data", ".text", " ", " "};
     if(((reloc*)e)->etiquette->section == undefined) {
       printf("%08x\t%s\t[UNDEFINED]\t%s\n",((reloc*)e)->rel_addresse,mesval[((reloc*)e)->rel_type],((reloc*)e)->etiquette->lex.tok);
     }
@@ -20,16 +20,20 @@ void affiche_reloc(void* e) {
     }
 }
 
-/*void affiche_reloc(void* e) {
+void ecrire_liste_reloc(FILE* fichier, Liste l) {
+  Liste e=l;
+  while(!liste_vide(e)) {
     static char* mesval[] = {"R_MIPS_32", "R_MIPS_26", "R_MIPS_LO16", "R_MIPS_HI16"};
-    static char* mesval2[] = {".bss", ".data", ".text", " ", " "};
-    if(((reloc*)e)->etiquette->section == undefined) {
-      printf("%08x\t%s\t[UNDEFINED]\t%s\n",((reloc*)e)->rel_addresse,mesval[((reloc*)e)->rel_type],((reloc*)e)->etiquette->lex.tok);
+    static char* mesval2[] = {".bss ", ".data", ".text", " ", " "};
+    if(((reloc*)e->val)->etiquette->section == undefined) {
+      fprintf(fichier, "%08x\t%s\t[UNDEFINED]\t%s\n",((reloc*)e->val)->rel_addresse,mesval[((reloc*)e->val)->rel_type],((reloc*)e->val)->etiquette->lex.tok);
     }
     else {
-      printf("%08x\t%s\t%s:%08x\t%s\n",((reloc*)e)->rel_addresse,mesval[((reloc*)e)->rel_type],mesval2[((reloc*)e)->etiquette->section],((reloc*)e)->etiquette->deca,((reloc*)e)->etiquette->lex.tok);
+      fprintf(fichier, "%08x\t%s\t%s:%08x\t%s\n",((reloc*)e->val)->rel_addresse,mesval[((reloc*)e->val)->rel_type],mesval2[((reloc*)e->val)->etiquette->section],((reloc*)e->val)->etiquette->deca,((reloc*)e->val)->etiquette->lex.tok);
     }
-}*/
+    e=e->suiv;
+  }
+}
 
 reloc* init_entree_reloc(instruction* i, int num_op, symb* symb_t) {
     reloc* r = calloc(1,sizeof(reloc));

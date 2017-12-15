@@ -22,8 +22,4 @@ lunchtime : .word 12 , 3 , 24
 .byte 0xAA
 .space 2
 .asciiz "blabla"
-.word menu
-
-.bss
-menu:
-.space 24
+.word
